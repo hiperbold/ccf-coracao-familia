@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Coração Família — Agenda (Modelo B)</title>
+<meta name="description" content="Agenda de eventos do Centro de Convivência Familiar Coração Família — protótipo Modelo B, próximo evento em destaque." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="ccf_design_tokens.css">
+<link rel="stylesheet" href="ccf_components.css">
+
+<style>
+  /* ==========================================================================
+     Só CSS de LAYOUT específico desta página (herói de duas colunas com
+     card de evento em destaque + grade de cards). Cor/raio/sombra/
+     tipografia sempre var(--ccf-...).
+     ========================================================================== */
+
+
+  /* --- Etiqueta pequena acima do título do herói --- */
+  .page-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--ccf-space-2);
+    font-size: var(--ccf-text-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--ccf-letter-spacing-wide);
+    font-weight: var(--ccf-font-weight-black);
+    color: var(--ccf-color-primary-strong);
+    background: var(--ccf-color-soft-primary);
+    padding: var(--ccf-space-2) var(--ccf-space-3);
+    border-radius: var(--ccf-radius-full);
+  }
+
+  /* --- Herói de duas colunas (padrão hero-grid do design system) --- */
+  .hero-split { padding: var(--ccf-space-16) 0 var(--ccf-space-12); }
+  .hero-split-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: var(--ccf-space-12);
+    align-items: center;
+  }
+  @media (max-width: 900px) {
+    .hero-split-grid { grid-template-columns: 1fr; }
+  }
+  .hero-split h1 { font-size: var(--ccf-text-h1); margin: var(--ccf-space-6) 0; }
+  .hero-split .lead { font-size: var(--ccf-text-lg); color: var(--ccf-color-text-muted); margin-bottom: var(--ccf-space-6); max-width: 56ch; }
+  .hero-split .hero-social { display: flex; gap: var(--ccf-space-3); }
+
+  /* --- Card de destaque (próximo evento), dentro do herói --- */
+  .featured-event .cta-row { margin-top: var(--ccf-space-2); }
+
+  /* --- Seção "Todos os próximos eventos" em grade de cards --- */
+  .section-events { padding: var(--ccf-space-12) 0 var(--ccf-space-20); border-top: 1px solid var(--ccf-color-border); }
+  .section-events .section-intro { margin-bottom: var(--ccf-space-8); max-width: var(--ccf-reading-width); }
+  .section-events h2 { font-size: var(--ccf-text-h2); margin-bottom: var(--ccf-space-3); }
+  .section-events .section-intro p { color: var(--ccf-color-text-muted); font-size: var(--ccf-text-lg); }
+  .event-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: var(--ccf-space-6); }
+</style>
+</head>
+
+<body>
+
+<!-- Sprite de ícones — inline, sem dependência externa -->
+<svg class="icon-sprite" aria-hidden="true">
+  <defs>
+    <symbol id="icon-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="8 12.5 10.8 15.5 16 9.5"/></symbol>
+    <symbol id="icon-alert" viewBox="0 0 24 24"><path d="M12 3.5 22 20H2z"/><line x1="12" y1="10" x2="12" y2="14.5"/><circle class="icon-fill" cx="12" cy="17.3" r="0.6"/></symbol>
+    <symbol id="icon-slash" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="6" y1="18" x2="18" y2="6"/></symbol>
+    <symbol id="icon-repeat" viewBox="0 0 24 24"><path d="M5 12a7 7 0 0 1 12-4.9M19 12a7 7 0 0 1-12 4.9"/><polyline points="16.5 3.5 17.1 7.1 13.5 7.7"/><polyline points="7.5 20.5 6.9 16.9 10.5 16.3"/></symbol>
+    <symbol id="icon-x" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></symbol>
+    <symbol id="icon-external" viewBox="0 0 24 24"><path d="M9 5H5a1.5 1.5 0 0 0-1.5 1.5v12A1.5 1.5 0 0 0 5 20h12a1.5 1.5 0 0 0 1.5-1.5V15"/><path d="M13 4h7v7"/><line x1="20" y1="4" x2="11" y2="13"/></symbol>
+    <symbol id="icon-chat" viewBox="0 0 24 24"><path d="M4 12a8 6.4 0 1 1 3.2 5.1L4 20l1.2-3.6A6.3 6.3 0 0 1 4 12z"/></symbol>
+    <symbol id="icon-share" viewBox="0 0 24 24"><circle cx="6" cy="12" r="2.3"/><circle cx="18" cy="5.5" r="2.3"/><circle cx="18" cy="18.5" r="2.3"/><line x1="8" y1="11" x2="16" y2="6.7"/><line x1="8" y1="13" x2="16" y2="17.3"/></symbol>
+    <symbol id="icon-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2"/><line x1="3.5" y1="9.5" x2="20.5" y2="9.5"/><line x1="8" y1="3" x2="8" y2="6.5"/><line x1="16" y1="3" x2="16" y2="6.5"/><line x1="12" y1="13" x2="12" y2="17"/><line x1="10" y1="15" x2="14" y2="15"/></symbol>
+    <symbol id="icon-pin" viewBox="0 0 24 24"><path d="M12 21s7-7.2 7-12a7 7 0 1 0-14 0c0 4.8 7 12 7 12z"/><circle cx="12" cy="9" r="2.4"/></symbol>
+    <symbol id="icon-instagram" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle class="icon-fill" cx="17" cy="7" r="0.9"/></symbol>
+    <symbol id="icon-facebook" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M14 8.5h-1.8c-.7 0-1.2.5-1.2 1.3V11h3l-.4 2.6h-2.6V20h-2.6v-6.4H8.5V11h1.9V9.4c0-2 1.2-3.4 3.2-3.4H14z" class="icon-fill"/></symbol>
+    <symbol id="icon-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><circle class="icon-fill" cx="12" cy="8" r="0.6"/></symbol>
+    <symbol id="icon-photo" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.4"/><path d="M4.5 16.5 9 12l3.5 3.5L16 12l3.5 3.5"/></symbol>
+    <symbol id="icon-menu-heart" viewBox="0 0 24 24"><path class="icon-fill" d="M12 20.5s-7.8-4.7-9.7-9.4C1 7.7 2.5 4.8 5.6 4.1c2-.5 3.9.4 5 2 .5-.9 1.7-2.3 4-2.1 3.2.3 5.2 3.2 4.1 6.8-1.4 4.7-6.7 9.7-6.7 9.7z"/></symbol>
+    <symbol id="icon-menu" viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></symbol>
+  </defs>
+</svg>
+
+<div class="proto-banner">
+  <p>Modelo B — protótipo para aprovação, próximo evento em destaque. <a href="homepage-opcao-a.html">Ver Modelo A →</a></p>
+</div>
+
+<header class="topbar">
+  <div class="shell topbar-inner">
+    <a class="brand-mini" href="homepage-opcao-b.html">
+      <img class="brand-logo" src="logo-ccf-lq.png" alt="Coração Família" />
+    </a>
+    <div class="topbar-end">
+      <input type="checkbox" id="nav-toggle" class="visually-hidden" aria-label="Abrir ou fechar menu de navegação" />
+      <label for="nav-toggle" class="nav-toggle-btn">
+        <svg class="icon icon-menu" aria-hidden="true"><use href="#icon-menu"/></svg>
+        <svg class="icon icon-close" aria-hidden="true"><use href="#icon-x"/></svg>
+      </label>
+      <nav id="site-nav" aria-label="Navegação principal">
+        <a href="homepage-opcao-b.html">Início</a>
+        <a href="#agenda">Agenda</a>
+        <a href="#">Sobre</a>
+        <a href="mailto:voluntariado.cf@gmail.com">Contato</a>
+      </nav>
+      <div class="header-social">
+        <a class="icon-circle-link" href="https://www.instagram.com/coracaofamilia/" target="_blank" rel="noopener" aria-label="Instagram"><svg class="icon" aria-hidden="true"><use href="#icon-instagram"/></svg></a>
+        <a class="icon-circle-link" href="https://www.facebook.com/coracaofamilia/" target="_blank" rel="noopener" aria-label="Facebook"><svg class="icon" aria-hidden="true"><use href="#icon-facebook"/></svg></a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ============================== HERÓI ============================== -->
+  <section class="hero-split">
+    <div class="shell hero-split-grid">
+      <div>
+        <span class="page-eyebrow">Centro de Convivência Familiar</span>
+        <h1>Um lugar de acolhida para famílias da Vila Santa Catarina.</h1>
+        <p class="lead">
+          O Coração Família é uma organização sem fins lucrativos que recebe famílias da Vila
+          Santa Catarina, Zona Sul de São Paulo. Esta agenda reúne os próximos eventos da
+          organização, com exemplos ilustrativos abaixo.
+        </p>
+        <div class="hero-social">
+          <a class="icon-circle-link" href="https://www.instagram.com/coracaofamilia/" target="_blank" rel="noopener" aria-label="Instagram"><svg class="icon" aria-hidden="true"><use href="#icon-instagram"/></svg></a>
+          <a class="icon-circle-link" href="https://www.facebook.com/coracaofamilia/" target="_blank" rel="noopener" aria-label="Facebook"><svg class="icon" aria-hidden="true"><use href="#icon-facebook"/></svg></a>
+        </div>
+      </div>
+
+      <div class="event-card featured-event">
+        <div class="event-card-image photo-placeholder"><svg class="icon" aria-hidden="true"><use href="#icon-photo"/></svg> Foto do evento (placeholder)</div>
+        <div class="event-card-body">
+          <div style="display:flex; gap: var(--ccf-space-4); align-items:flex-start;">
+            <div class="date-badge"><span class="day">03</span><span class="month">out</span></div>
+            <div style="flex:1;">
+              <h4>Oficina de teatro (evento ilustrativo)</h4>
+              <div class="meta-row"><svg class="icon" aria-hidden="true"><use href="#icon-pin"/></svg> Sede do CCF · 14h às 16h</div>
+            </div>
+          </div>
+          <span class="status-badge status-open" style="align-self:flex-start;"><svg class="icon" aria-hidden="true"><use href="#icon-check"/></svg> Vagas abertas</span>
+          <div class="cta-row">
+            <a class="btn btn-primary" href="evento-opcao-b.html">Ver detalhes</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== TODOS OS PRÓXIMOS EVENTOS ============================== -->
+  <section class="section-events" id="agenda">
+    <div class="shell">
+      <div class="section-intro">
+        <h2>Todos os próximos eventos</h2>
+        <p>Oficinas, feiras e rodas de conversa em grade de cartões — todo o conteúdo abaixo é ilustrativo.</p>
+      </div>
+
+      <div class="event-grid">
+        <a class="event-card" href="evento-opcao-b.html">
+          <div class="event-card-image photo-placeholder"><svg class="icon" aria-hidden="true"><use href="#icon-photo"/></svg> Foto do evento (placeholder)</div>
+          <div class="event-card-body">
+            <div style="display:flex; gap: var(--ccf-space-4); align-items:flex-start;">
+              <div class="date-badge"><span class="day">03</span><span class="month">out</span></div>
+              <div style="flex:1;">
+                <h4>Oficina de teatro (evento ilustrativo)</h4>
+                <div class="meta-row"><svg class="icon" aria-hidden="true"><use href="#icon-pin"/></svg> Sede do CCF · 14h às 16h</div>
+              </div>
+            </div>
+            <span class="status-badge status-open" style="align-self:flex-start;"><svg class="icon" aria-hidden="true"><use href="#icon-check"/></svg> Vagas abertas</span>
+          </div>
+        </a>
+        <a class="event-card" href="evento-opcao-b.html">
+          <div class="event-card-image photo-placeholder"><svg class="icon" aria-hidden="true"><use href="#icon-photo"/></svg> Foto do evento (placeholder)</div>
+          <div class="event-card-body">
+            <div style="display:flex; gap: var(--ccf-space-4); align-items:flex-start;">
+              <div class="date-badge"><span class="day">10</span><span class="month">out</span></div>
+              <div style="flex:1;">
+                <h4>Feira de trocas comunitária (evento ilustrativo)</h4>
+                <div class="meta-row"><svg class="icon" aria-hidden="true"><use href="#icon-pin"/></svg> Sede do CCF · 10 e 11 de outubro</div>
+              </div>
+            </div>
+            <span class="status-badge status-limited" style="align-self:flex-start;"><svg class="icon" aria-hidden="true"><use href="#icon-alert"/></svg> Vagas limitadas</span>
+          </div>
+        </a>
+        <a class="event-card" href="evento-opcao-b.html">
+          <div class="event-card-image photo-placeholder"><svg class="icon" aria-hidden="true"><use href="#icon-photo"/></svg> Foto do evento (placeholder)</div>
+          <div class="event-card-body">
+            <div style="display:flex; gap: var(--ccf-space-4); align-items:flex-start;">
+              <div class="date-badge"><span class="day">18</span><span class="month">out</span></div>
+              <div style="flex:1;">
+                <h4>Roda de conversa sobre parentalidade (evento ilustrativo)</h4>
+                <div class="meta-row"><svg class="icon" aria-hidden="true"><use href="#icon-pin"/></svg> Sede do CCF · dia todo</div>
+              </div>
+            </div>
+            <span class="status-badge status-changed" style="align-self:flex-start;"><svg class="icon" aria-hidden="true"><use href="#icon-repeat"/></svg> Data alterada</span>
+          </div>
+        </a>
+        <a class="event-card" href="evento-opcao-b.html">
+          <div class="event-card-image photo-placeholder"><svg class="icon" aria-hidden="true"><use href="#icon-photo"/></svg> Foto do evento (placeholder)</div>
+          <div class="event-card-body">
+            <div style="display:flex; gap: var(--ccf-space-4); align-items:flex-start;">
+              <div class="date-badge"><span class="day">05</span><span class="month">nov</span></div>
+              <div style="flex:1;">
+                <h4>Encontro de mães e bebês (evento ilustrativo)</h4>
+                <div class="meta-row"><svg class="icon" aria-hidden="true"><use href="#icon-pin"/></svg> Centro Comunitário Vila Guacuri (endereço ilustrativo) · 9h às 11h</div>
+              </div>
+            </div>
+            <span class="status-badge status-full" style="align-self:flex-start;"><svg class="icon" aria-hidden="true"><use href="#icon-slash"/></svg> Lotado</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer-shell">
+  <div class="shell">
+    <div class="footer-demo">
+      <div>
+        <span class="footer-icon"><img src="icon-ccf.png" alt="Coração Família" /></span>
+        <h5>Centro de Convivência Familiar Coração Família</h5>
+        <p>Organização sem fins lucrativos na Vila Santa Catarina, Zona Sul de São Paulo.</p>
+        <div class="social-links">
+          <a href="https://www.instagram.com/coracaofamilia/" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#icon-instagram"/></svg><span class="visually-hidden">Instagram</span></a>
+          <a href="https://www.facebook.com/coracaofamilia/" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#icon-facebook"/></svg><span class="visually-hidden">Facebook</span></a>
+        </div>
+      </div>
+      <div class="addr">
+        <h5>Endereço</h5>
+        <div>Rua Calasans, 200</div>
+        <div>Vila Santa Catarina, São Paulo, SP</div>
+        <div>CEP 04369-100</div>
+        <span class="confirm-note" style="margin-top: var(--ccf-space-2);"><svg class="icon" aria-hidden="true"><use href="#icon-info"/></svg> Confirmar com a organização antes de publicar</span>
+      </div>
+    </div>
+    <p class="footer-credit">Desenvolvido com <svg class="icon" aria-hidden="true" style="color: var(--ccf-color-coral); width: 0.9em; height: 0.9em; vertical-align: -0.05em;"><use href="#icon-menu-heart"/></svg><span class="visually-hidden">amor</span> por <a href="https://www.hiperbold.com.br" target="_blank" rel="noopener nofollow">Hiperbold</a>.</p>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,714 @@
+/* ==========================================================================
+   Coração Família — Componentes reutilizáveis
+   Extraído do <style> de ccf_design_system.html (Passo 0 do briefing das
+   páginas modelo). Cada bloco abaixo é cópia literal das regras de
+   componente já aprovadas no design system — reset, tipografia base,
+   botões, cartões, badges, timeline, abas de dia, programação, convidados,
+   banner, local/mapa, cabeçalho funcional (com menu mobile por checkbox) e
+   rodapé institucional.
+
+   Só usa var(--ccf-...) definidos em ccf_design_tokens.css. Nenhum token
+   novo foi criado aqui.
+
+   No fim do arquivo, uma seção "NOVO — não existia no design system" reúne
+   as poucas classes que precisaram ser criadas ou destravadas de um
+   seletor aninhado (ex.: .meta-row, .cta-row) para funcionar fora do
+   contexto de documentação (.page-mock) — ver relatório de entrega para o
+   motivo de cada uma.
+   ========================================================================== */
+
+/* --- Reset básico e tipografia base -------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+body {
+  margin: 0;
+  font-family: var(--ccf-font-sans);
+  color: var(--ccf-color-text);
+  background: var(--ccf-color-background);
+  line-height: var(--ccf-line-height-normal);
+}
+
+a { color: inherit; }
+img { max-width: 100%; display: block; }
+
+h1, h2, h3, h4, h5 {
+  font-family: var(--ccf-font-display);
+  margin: 0;
+  line-height: var(--ccf-line-height-tight);
+  letter-spacing: var(--ccf-letter-spacing-tight);
+}
+
+p { margin: 0; }
+
+/* --- Foco visível --------------------------------------------------------- */
+:focus { outline: none; }
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+.btn:focus-visible,
+.day-tab:focus-visible,
+.event-card:focus-visible,
+[tabindex]:focus-visible {
+  outline: none;
+  box-shadow: var(--ccf-focus-ring);
+}
+
+/* --- Utilitários de layout / acessibilidade -------------------------------- */
+.shell {
+  width: min(calc(100% - (var(--ccf-page-gutter) * 2)), var(--ccf-content-width));
+  margin-inline: auto;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --- Ícones (sprite) -------------------------------------------------------
+   "display: none" no sprite quebra o <use> em alguns motores — escondido
+   por posição/tamanho, não por display. */
+.icon-sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+.icon { width: 1em; height: 1em; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.icon-fill { fill: currentColor; stroke: none; }
+
+/* --- Cabeçalho / navegação (padrão funcional real, com menu mobile) -------
+   Copiado exatamente do topbar real de ccf_design_system.html (não do
+   mockup ilustrativo da seção Componentes item "a"). Não alterar a
+   estrutura do checkbox/label — já testado em navegador real. */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: var(--ccf-z-header);
+  backdrop-filter: blur(var(--ccf-header-blur));
+  background: var(--ccf-header-bg);
+  border-bottom: 1px solid var(--ccf-header-border);
+}
+
+.topbar-inner {
+  position: relative;
+  min-height: var(--ccf-space-16);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ccf-space-6);
+  padding-block: var(--ccf-space-3);
+}
+
+.brand-mini {
+  display: flex;
+  align-items: center;
+  gap: var(--ccf-space-3);
+  text-decoration: none;
+  font-weight: var(--ccf-font-weight-black);
+  font-family: var(--ccf-font-sans);
+  color: var(--ccf-color-text);
+  font-size: var(--ccf-text-sm);
+}
+
+.brand-icon {
+  width: var(--ccf-space-10);
+  height: var(--ccf-space-10);
+  border-radius: var(--ccf-radius-full);
+  background: var(--ccf-p-graphite-900);
+  padding: var(--ccf-space-1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+
+.brand-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+#site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ccf-space-1);
+}
+
+#site-nav a {
+  text-decoration: none;
+  font-size: var(--ccf-text-sm);
+  font-weight: var(--ccf-font-weight-bold);
+  color: var(--ccf-nav-link-fg);
+  padding: var(--ccf-space-2) var(--ccf-space-3);
+  border-radius: var(--ccf-radius-full);
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--ccf-button-min-height);
+}
+
+#site-nav a:hover {
+  color: var(--ccf-nav-link-fg-hover);
+  background: var(--ccf-nav-link-bg-hover);
+}
+
+/* O checkbox #nav-toggle fica visualmente oculto (.visually-hidden); quem
+   aparece como botão é o <label for="nav-toggle">, com dois ícones SVG
+   (hambúrguer/fechar) alternados via #nav-toggle:checked. */
+.nav-toggle-btn {
+  display: none;
+  width: var(--ccf-button-min-height);
+  height: var(--ccf-button-min-height);
+  border-radius: var(--ccf-radius-md);
+  border: 1px solid var(--ccf-color-primary);
+  background: var(--ccf-color-soft-primary);
+  color: var(--ccf-color-primary-strong);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex: none;
+}
+
+.nav-toggle-btn .icon { width: 1.25rem; height: 1.25rem; }
+.nav-toggle-btn .icon-close { display: none; }
+#nav-toggle:checked ~ .nav-toggle-btn .icon-menu { display: none; }
+#nav-toggle:checked ~ .nav-toggle-btn .icon-close { display: block; }
+
+#nav-toggle:focus-visible ~ .nav-toggle-btn {
+  outline: none;
+  box-shadow: var(--ccf-focus-ring);
+}
+
+@media (max-width: 767px) {
+  .nav-toggle-btn { display: flex; }
+  #site-nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    background: var(--ccf-color-surface);
+    border: 1px solid var(--ccf-color-border);
+    border-radius: var(--ccf-radius-lg);
+    padding: var(--ccf-space-2);
+    margin-top: var(--ccf-space-2);
+    box-shadow: var(--ccf-shadow-md);
+  }
+  #nav-toggle:checked ~ #site-nav { display: flex; }
+  #site-nav a { width: 100%; }
+}
+
+/* --- Botões ----------------------------------------------------------------- */
+.btn {
+  appearance: none;
+  border: 0;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ccf-space-2);
+  min-height: var(--ccf-button-min-height);
+  padding: 0 var(--ccf-button-padding-x);
+  border-radius: var(--ccf-button-radius);
+  font: var(--ccf-button-font);
+  cursor: pointer;
+  transition: transform var(--ccf-duration-base) var(--ccf-easing-standard);
+}
+
+.btn:hover { transform: translateY(-1px); }
+.btn .icon { font-size: 1.1em; }
+
+.btn-primary {
+  background: var(--ccf-button-primary-bg);
+  color: var(--ccf-button-primary-fg);
+  box-shadow: var(--ccf-button-primary-shadow);
+}
+.btn-primary:hover { background: var(--ccf-button-primary-bg-hover); }
+.btn-primary:active { background: var(--ccf-button-primary-bg-active); }
+
+.btn-secondary {
+  background: var(--ccf-button-secondary-bg);
+  color: var(--ccf-button-secondary-fg);
+}
+.btn-secondary:hover { background: var(--ccf-button-secondary-bg-hover); }
+
+.btn-outline {
+  background: var(--ccf-button-outline-bg);
+  color: var(--ccf-button-outline-fg);
+  border: 1px solid var(--ccf-button-outline-border);
+}
+
+.btn-soft {
+  background: var(--ccf-button-soft-bg);
+  color: var(--ccf-button-soft-fg);
+}
+
+/* --- Cartão base -------------------------------------------------------------- */
+.card {
+  background: var(--ccf-card-bg);
+  border: 1px solid var(--ccf-card-border);
+  border-radius: var(--ccf-card-radius);
+  padding: var(--ccf-card-padding);
+  box-shadow: var(--ccf-card-shadow);
+}
+
+/* --- Placeholder de foto ------------------------------------------------------ */
+.photo-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ccf-space-2);
+  background: var(--ccf-color-soft-secondary);
+  color: var(--ccf-color-secondary);
+  font-size: var(--ccf-text-xs);
+  text-align: center;
+  padding: var(--ccf-space-4);
+}
+.photo-placeholder .icon { width: 2rem; height: 2rem; }
+
+/* --- Etiqueta de data ---------------------------------------------------------- */
+.date-badge {
+  width: var(--ccf-date-badge-size);
+  height: var(--ccf-date-badge-size);
+  border-radius: var(--ccf-date-badge-radius);
+  background: var(--ccf-date-badge-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.date-badge .day { font-family: var(--ccf-font-display); font-size: var(--ccf-text-xl); font-weight: var(--ccf-font-weight-bold); color: var(--ccf-date-badge-fg-day); line-height: 1; }
+.date-badge .month { font-size: var(--ccf-text-2xs); text-transform: uppercase; letter-spacing: var(--ccf-letter-spacing-wide); color: var(--ccf-date-badge-fg-month); }
+
+/* --- Etiquetas de status -------------------------------------------------------- */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ccf-space-1);
+  padding: var(--ccf-space-1) var(--ccf-space-3);
+  border-radius: var(--ccf-radius-full);
+  font-size: var(--ccf-text-xs);
+  font-weight: var(--ccf-font-weight-bold);
+}
+.status-badge .icon { width: 0.9rem; height: 0.9rem; }
+.status-open      { background: var(--ccf-status-open-bg);      color: var(--ccf-status-open-fg); }
+.status-limited   { background: var(--ccf-status-limited-bg);   color: var(--ccf-status-limited-fg); }
+.status-full      { background: var(--ccf-status-full-bg);      color: var(--ccf-status-full-fg); }
+.status-changed   { background: var(--ccf-status-changed-bg);   color: var(--ccf-status-changed-fg); }
+.status-cancelled { background: var(--ccf-status-cancelled-bg); color: var(--ccf-status-cancelled-fg); }
+
+.status-showcase { display: flex; flex-wrap: wrap; gap: var(--ccf-space-3); }
+
+/* --- Card de evento ---------------------------------------------------------- */
+.event-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--ccf-card-bg);
+  border: 1px solid var(--ccf-card-border);
+  border-radius: var(--ccf-card-radius);
+  overflow: hidden;
+  box-shadow: var(--ccf-card-shadow);
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow var(--ccf-duration-base) var(--ccf-easing-standard);
+}
+.event-card:hover { box-shadow: var(--ccf-card-shadow-hover); }
+
+.event-card-image {
+  aspect-ratio: var(--ccf-event-card-image-ratio);
+  width: 100%;
+  object-fit: cover;
+  background: var(--ccf-color-soft-primary);
+}
+
+.event-card-noimage {
+  aspect-ratio: var(--ccf-event-card-image-ratio);
+  width: 100%;
+  background: var(--ccf-color-soft-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ccf-color-primary-strong);
+  font-family: var(--ccf-font-display);
+  font-size: var(--ccf-text-sm);
+  text-align: center;
+  padding: var(--ccf-space-4);
+}
+
+.event-card-top {
+  display: flex;
+  gap: var(--ccf-space-4);
+  align-items: flex-start;
+  padding: var(--ccf-card-padding) var(--ccf-card-padding) 0;
+}
+
+.event-card-body {
+  padding: var(--ccf-card-padding);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ccf-space-2);
+}
+
+.event-card h4 { font-size: var(--ccf-text-xl); }
+
+/* .meta-row (data/local em linha, com ícone) é declarado uma única vez,
+   mais abaixo, na seção "NOVO" — usado aqui, em .timeline-card e solto. */
+
+/* --- Trilho cronológico -------------------------------------------------------- */
+.timeline {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ccf-space-8);
+  padding-left: var(--ccf-space-8);
+}
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: calc((var(--ccf-timeline-node-size) - var(--ccf-timeline-line-width)) / 2);
+  top: var(--ccf-space-2);
+  bottom: var(--ccf-space-2);
+  width: var(--ccf-timeline-line-width);
+  background: var(--ccf-timeline-line);
+}
+.timeline-item {
+  position: relative;
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+.timeline-item::before {
+  content: "";
+  position: absolute;
+  left: calc(-1 * var(--ccf-space-8));
+  top: var(--ccf-space-2);
+  width: var(--ccf-timeline-node-size);
+  height: var(--ccf-timeline-node-size);
+  border-radius: var(--ccf-radius-full);
+  background: var(--ccf-timeline-node-bg);
+  box-shadow: 0 0 0 var(--ccf-space-1) var(--ccf-timeline-node-ring);
+}
+.timeline-card {
+  display: flex;
+  align-items: center;
+  gap: var(--ccf-space-4);
+  background: var(--ccf-card-bg);
+  border: 1px solid var(--ccf-card-border);
+  border-radius: var(--ccf-radius-lg);
+  padding: var(--ccf-space-4);
+  box-shadow: var(--ccf-card-shadow);
+  transition: box-shadow var(--ccf-duration-base) var(--ccf-easing-standard);
+}
+.timeline-item:hover .timeline-card { box-shadow: var(--ccf-card-shadow-hover); }
+.timeline-card h4 { font-size: var(--ccf-text-lg); margin-bottom: var(--ccf-space-1); }
+
+/* --- Abas de dia ---------------------------------------------------------------- */
+.day-tabs { display: flex; gap: var(--ccf-space-2); flex-wrap: wrap; margin-bottom: var(--ccf-space-5); }
+.day-tab {
+  appearance: none;
+  border: 1px solid var(--ccf-color-border);
+  background: var(--ccf-day-tab-bg);
+  color: var(--ccf-day-tab-fg);
+  border-radius: var(--ccf-day-tab-radius);
+  padding: var(--ccf-space-2) var(--ccf-space-5);
+  font: var(--ccf-font-weight-bold) var(--ccf-text-sm) / 1 var(--ccf-font-sans);
+  cursor: default;
+  min-height: var(--ccf-button-min-height);
+}
+.day-tab[aria-selected="true"] {
+  background: var(--ccf-day-tab-bg-active);
+  color: var(--ccf-day-tab-fg-active);
+  border-color: transparent;
+}
+
+/* --- Programação (linha do tempo do dia) ----------------------------------------- */
+.schedule { display: flex; flex-direction: column; }
+.schedule-item {
+  display: flex;
+  gap: var(--ccf-space-4);
+  padding: var(--ccf-space-4) 0;
+  border-bottom: 1px solid var(--ccf-schedule-divider);
+}
+.schedule-item:last-child { border-bottom: 0; }
+.schedule-time {
+  width: var(--ccf-schedule-time-width);
+  flex: none;
+  font-weight: var(--ccf-font-weight-bold);
+  color: var(--ccf-color-primary-strong);
+  font-size: var(--ccf-text-sm);
+}
+.schedule-content h4 { font-size: var(--ccf-text-base); margin-bottom: var(--ccf-space-1); }
+.schedule-content p { color: var(--ccf-color-text-muted); font-size: var(--ccf-text-sm); }
+
+/* --- Convidados -------------------------------------------------------------------- */
+.guest-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: var(--ccf-space-6); }
+.guest-card { display: flex; flex-direction: column; align-items: flex-start; gap: var(--ccf-space-3); }
+.guest-avatar {
+  width: var(--ccf-guest-avatar-size);
+  height: var(--ccf-guest-avatar-size);
+  border-radius: var(--ccf-guest-avatar-radius);
+  background: var(--ccf-color-soft-primary);
+  color: var(--ccf-color-primary-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--ccf-font-display);
+  font-weight: var(--ccf-font-weight-bold);
+  font-size: var(--ccf-text-lg);
+  flex: none;
+  overflow: hidden;
+}
+.guest-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.guest-avatar-photo {
+  width: calc(var(--ccf-guest-avatar-size) * 1.7);
+  height: calc(var(--ccf-guest-avatar-size) * 1.7);
+  border-radius: var(--ccf-radius-lg);
+  padding: var(--ccf-space-2);
+}
+.guest-avatar-photo .icon { width: 1.5rem; height: 1.5rem; }
+.guest-name { font-weight: var(--ccf-font-weight-bold); color: var(--ccf-guest-name-fg); }
+.guest-role { font-size: var(--ccf-text-sm); font-weight: var(--ccf-font-weight-semibold); color: var(--ccf-guest-role-fg); }
+.guest-bio { font-size: var(--ccf-text-sm); color: var(--ccf-guest-bio-fg); }
+
+/* --- Banner do evento ----------------------------------------------------------------- */
+.banner {
+  position: relative;
+  border-radius: var(--ccf-banner-radius);
+  overflow: hidden;
+  aspect-ratio: var(--ccf-banner-ratio);
+  background: var(--ccf-color-soft-secondary);
+}
+.banner img { width: 100%; height: 100%; object-fit: cover; }
+.banner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--ccf-banner-overlay);
+}
+.banner-caption {
+  position: absolute;
+  left: var(--ccf-space-6);
+  right: var(--ccf-space-6);
+  bottom: var(--ccf-space-6);
+  color: var(--ccf-banner-caption-fg);
+  z-index: 1;
+}
+.banner-noimg {
+  width: 100%;
+  height: 100%;
+}
+
+/* --- Local --------------------------------------------------------------------------- */
+.location-block { display: flex; gap: var(--ccf-space-4); align-items: flex-start; }
+.location-block .icon { width: 1.5rem; height: 1.5rem; color: var(--ccf-color-primary-strong); margin-top: var(--ccf-space-1); flex: none; }
+.confirm-note {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ccf-space-1);
+  margin-top: var(--ccf-space-2);
+  font-size: var(--ccf-text-xs);
+  color: var(--ccf-color-warning-text);
+  background: var(--ccf-color-soft-warning);
+  padding: var(--ccf-space-1) var(--ccf-space-2);
+  border-radius: var(--ccf-radius-sm);
+}
+.map-embed {
+  margin-top: var(--ccf-space-4);
+  border-radius: var(--ccf-radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--ccf-color-border);
+}
+.map-embed iframe {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+}
+.map-route-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ccf-space-2);
+  margin-top: var(--ccf-space-3);
+  font-size: var(--ccf-text-sm);
+  font-weight: var(--ccf-font-weight-bold);
+  color: var(--ccf-color-primary-strong);
+  text-decoration: none;
+}
+.map-route-link:hover { color: var(--ccf-color-primary); }
+.map-route-link .icon { width: 1rem; height: 1rem; }
+
+/* --- Título de bloco / cabeçalho com data (já eram classes autônomas,
+   não dependiam de .page-mock) --------------------------------------------- */
+.block-title {
+  display: block;
+  font-family: var(--ccf-font-sans);
+  font-size: var(--ccf-text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--ccf-letter-spacing-wide);
+  font-weight: var(--ccf-font-weight-black);
+  color: var(--ccf-color-text-muted);
+  margin: 0 0 var(--ccf-space-4);
+}
+.header-with-date { display: flex; gap: var(--ccf-space-4); align-items: center; }
+
+/* --- Rodapé institucional (agora o rodapé real do site, não uma
+   demonstração dentro de um cartão) ------------------------------------------- */
+.footer-demo {
+  background: var(--ccf-footer-bg);
+  color: var(--ccf-footer-fg);
+  border-radius: var(--ccf-card-radius);
+  padding: var(--ccf-space-10);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--ccf-space-8);
+}
+.footer-demo .footer-icon {
+  width: var(--ccf-button-min-height);
+  height: var(--ccf-button-min-height);
+  border-radius: var(--ccf-radius-full);
+  margin-bottom: var(--ccf-space-4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.footer-demo .footer-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.footer-demo p { color: var(--ccf-footer-fg-muted); font-size: var(--ccf-text-sm); max-width: 32ch; }
+.footer-demo .social-links { display: flex; gap: var(--ccf-space-3); margin-top: var(--ccf-space-4); }
+.footer-demo .social-links a {
+  width: var(--ccf-button-min-height);
+  height: var(--ccf-button-min-height);
+  border-radius: var(--ccf-radius-full);
+  border: 1px solid var(--ccf-footer-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ccf-footer-fg);
+  text-decoration: none;
+}
+.footer-demo .social-links a:hover { color: var(--ccf-footer-link-fg-hover); }
+.footer-demo .addr { display: flex; flex-direction: column; gap: var(--ccf-space-1); font-size: var(--ccf-text-sm); color: var(--ccf-footer-fg-muted); }
+.footer-demo h5 { color: var(--ccf-footer-fg); font-size: var(--ccf-text-lg); margin-bottom: var(--ccf-space-3); }
+@media (max-width: 700px) { .footer-demo { grid-template-columns: 1fr; } }
+
+/* ==========================================================================
+   NOVO — não existia como classe autônoma no design system
+   As 4 páginas modelo são a primeira vez que este CSS vira site real (fora
+   do documento de demonstração), então algumas peças precisaram de uma
+   versão desacoplada do contexto só-de-doc (.page-mock) ou de um pequeno
+   componente novo para o cabeçalho funcional ganhar links sociais e logo.
+   Todas usam só var(--ccf-...) já existentes — nenhum token novo.
+   ========================================================================== */
+
+/* .meta-row só existia como seletor aninhado (".event-card .meta-row",
+   ".timeline-card .meta-row"); o cabeçalho do evento (data + local) precisa
+   da mesma linha fora desses dois contextos. */
+.meta-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ccf-space-2);
+  font-size: var(--ccf-text-sm);
+  color: var(--ccf-color-text-muted);
+}
+.meta-row .icon { color: var(--ccf-color-text-muted); }
+
+/* Equivalentes desacoplados de ".page-mock .mock-title/.desc/.cta-row/
+   .badges-row" (que exigiam um ancestral .page-mock, excluído por ser só de
+   documentação) — mesmos valores, prontos para uso direto na página real. */
+.event-title { font-size: var(--ccf-text-h2); }
+.event-desc { max-width: var(--ccf-reading-width); color: var(--ccf-color-text); font-size: var(--ccf-text-base); }
+.cta-row { display: flex; gap: var(--ccf-space-3); flex-wrap: wrap; }
+.badges-row { display: flex; gap: var(--ccf-space-3); align-items: center; flex-wrap: wrap; }
+
+/* Logo do cabeçalho: no design system, .brand-mini era usado com
+   ícone+texto; no site real o cabeçalho leva a logo com letreiro
+   (logo-ccf-lq.png). Tamanho igual ao já usado no mockup do item "a.
+   Cabeçalho e navegação" (style="width: 4rem"), só que como classe. */
+.brand-logo { width: 4rem; height: auto; }
+
+/* Agrupa o toggle do menu mobile + nav + ícones sociais do lado direito do
+   cabeçalho, para .topbar-inner continuar sendo "logo | resto" no
+   space-between — sem isso os 5 elementos ficariam espalhados. Os
+   descendentes diretos continuam sendo #nav-toggle, .nav-toggle-btn e
+   #site-nav, então os seletores "~" do menu mobile continuam funcionando
+   (agem entre irmãos, não importa a profundidade do ancestral comum). */
+.topbar-end { display: flex; align-items: center; gap: var(--ccf-space-3); flex-wrap: wrap; }
+.header-social { display: flex; gap: var(--ccf-space-2); }
+
+/* Botão circular de rede social — generaliza o padrão que já aparecia duas
+   vezes no design system (ícones do rodapé institucional, com estilo
+   próprio embutido em .footer-demo .social-links a; e o mockup do
+   cabeçalho, com o mesmo desenho em style inline) em uma classe só, para
+   reuso no cabeçalho real e no herói das duas homepages. */
+.icon-circle-link {
+  width: var(--ccf-button-min-height);
+  height: var(--ccf-button-min-height);
+  border-radius: var(--ccf-radius-full);
+  border: 1px solid var(--ccf-color-border);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ccf-color-text);
+  text-decoration: none;
+  flex: none;
+}
+.icon-circle-link:hover { color: var(--ccf-color-primary-strong); background: var(--ccf-color-soft-primary); }
+
+/* Moldura do rodapé real: .footer-demo por si só é um cartão pensado para
+   viver dentro de outro fundo (usado assim na seção "Componentes" da
+   documentação). No rodapé de verdade ele é o próprio <footer>, então tira
+   o raio/sombra/padding duplicados e deixa o .site-footer-shell cuidar do
+   fundo escuro de ponta a ponta da tela. */
+.site-footer-shell {
+  background: var(--ccf-footer-bg);
+  padding: var(--ccf-space-16) 0;
+}
+.site-footer-shell .footer-demo {
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+}
+.footer-credit {
+  margin-top: var(--ccf-space-8);
+  padding-top: var(--ccf-space-6);
+  border-top: 1px solid var(--ccf-footer-border);
+  color: var(--ccf-footer-fg-muted);
+  font-size: var(--ccf-text-sm);
+  text-align: center;
+}
+.footer-credit a {
+  color: var(--ccf-footer-fg);
+  font-weight: var(--ccf-font-weight-bold);
+  text-decoration: underline;
+}
+.footer-credit a:hover { color: var(--ccf-footer-link-fg-hover); }
+
+/* Aviso de protótipo (topo de cada página modelo) — idêntico nas 4 páginas,
+   centralizado aqui para não duplicar. */
+.proto-banner {
+  background: var(--ccf-color-soft-warning);
+  border-bottom: 1px solid var(--ccf-color-border);
+  padding: var(--ccf-space-2) var(--ccf-page-gutter);
+  text-align: center;
+}
+.proto-banner p { margin: 0; font-size: var(--ccf-text-xs); font-weight: var(--ccf-font-weight-bold); color: var(--ccf-color-warning-text); }
+.proto-banner a { color: var(--ccf-color-warning-text); text-decoration: underline; }

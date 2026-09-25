@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Feira de trocas comunitária — Coração Família (Modelo B)</title>
+<meta name="description" content="Página de evento do Centro de Convivência Familiar Coração Família — protótipo Modelo B, duas colunas com resumo fixo." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="ccf_design_tokens.css">
+<link rel="stylesheet" href="ccf_components.css">
+
+<style>
+  /* ==========================================================================
+     Só CSS de LAYOUT específico desta página (banner full width + duas
+     colunas em desktop, com cartão-resumo sticky). Cor/raio/sombra/
+     tipografia sempre var(--ccf-...).
+     ========================================================================== */
+
+
+  /* --- Banner no topo, sem cantos arredondados (contido no .shell, mesma
+     largura máxima do resto da página) --- */
+  .evento-banner-wrap { padding: var(--ccf-space-10) 0 0; }
+  .evento-banner-wrap .banner { border-radius: 0; }
+
+  /* --- Corpo: duas colunas em desktop (>=1024px), coluna única abaixo --- */
+  .evento-body { padding: var(--ccf-space-10) 0 var(--ccf-space-20); }
+  .evento-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--ccf-space-10);
+  }
+  @media (min-width: 1024px) {
+    /* align-items no valor padrão (stretch): a coluna lateral precisa ter a
+       mesma altura da coluna principal (mais alta) para o cartão sticky ter
+       espaço de sobra onde "grudar" durante a rolagem — com align-items:
+       start a coluna lateral ficaria do tamanho do próprio cartão e o
+       sticky não teria percurso nenhum para acompanhar a rolagem. */
+    .evento-layout { grid-template-columns: 1.85fr 1fr; }
+  }
+  .evento-main-col { display: flex; flex-direction: column; gap: var(--ccf-space-10); min-width: 0; }
+  .evento-side-col { min-width: 0; }
+
+  /* Cartão-resumo: sticky, acompanha a rolagem sem ficar atrás do
+     cabeçalho fixo (topo do cabeçalho ~88px de altura + folga). Como
+     .evento-side-col agora estica até a altura da coluna principal, o
+     cartão (mais baixo que a coluna) tem percurso real para grudar. */
+  .evento-summary-card {
+    position: sticky;
+    top: calc(var(--ccf-space-16) + var(--ccf-space-8));
+    display: flex;
+    flex-direction: column;
+    gap: var(--ccf-space-5);
+    /* Em telas baixas (notebook 1366x768 com barra do navegador) o cartão
+       inteiro pode ser mais alto que o espaço vertical livre abaixo do
+       cabeçalho — sem isso os botões de ação ficam cortados fora da tela
+       enquanto o cartão está grudado. Acima desse limite, rola por dentro. */
+    max-height: calc(100vh - var(--ccf-space-16) - var(--ccf-space-8) - var(--ccf-space-6));
+    overflow-y: auto;
+  }
+  .evento-summary-card .cta-row { flex-direction: column; align-items: stretch; }
+  .evento-summary-card .cta-row .btn { width: 100%; }
+</style>
+</head>
+
+<body>
+
+<!-- Sprite de ícones — inline, sem dependência externa -->
+<svg class="icon-sprite" aria-hidden="true">
+  <defs>
+    <symbol id="icon-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="8 12.5 10.8 15.5 16 9.5"/></symbol>
+    <symbol id="icon-alert" viewBox="0 0 24 24"><path d="M12 3.5 22 20H2z"/><line x1="12" y1="10" x2="12" y2="14.5"/><circle class="icon-fill" cx="12" cy="17.3" r="0.6"/></symbol>
+    <symbol id="icon-slash" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="6" y1="18" x2="18" y2="6"/></symbol>
+    <symbol id="icon-repeat" viewBox="0 0 24 24"><path d="M5 12a7 7 0 0 1 12-4.9M19 12a7 7 0 0 1-12 4.9"/><polyline points="16.5 3.5 17.1 7.1 13.5 7.7"/><polyline points="7.5 20.5 6.9 16.9 10.5 16.3"/></symbol>
+    <symbol id="icon-x" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></symbol>
+    <symbol id="icon-external" viewBox="0 0 24 24"><path d="M9 5H5a1.5 1.5 0 0 0-1.5 1.5v12A1.5 1.5 0 0 0 5 20h12a1.5 1.5 0 0 0 1.5-1.5V15"/><path d="M13 4h7v7"/><line x1="20" y1="4" x2="11" y2="13"/></symbol>
+    <symbol id="icon-chat" viewBox="0 0 24 24"><path d="M4 12a8 6.4 0 1 1 3.2 5.1L4 20l1.2-3.6A6.3 6.3 0 0 1 4 12z"/></symbol>
+    <symbol id="icon-share" viewBox="0 0 24 24"><circle cx="6" cy="12" r="2.3"/><circle cx="18" cy="5.5" r="2.3"/><circle cx="18" cy="18.5" r="2.3"/><line x1="8" y1="11" x2="16" y2="6.7"/><line x1="8" y1="13" x2="16" y2="17.3"/></symbol>
+    <symbol id="icon-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2"/><line x1="3.5" y1="9.5" x2="20.5" y2="9.5"/><line x1="8" y1="3" x2="8" y2="6.5"/><line x1="16" y1="3" x2="16" y2="6.5"/><line x1="12" y1="13" x2="12" y2="17"/><line x1="10" y1="15" x2="14" y2="15"/></symbol>
+    <symbol id="icon-pin" viewBox="0 0 24 24"><path d="M12 21s7-7.2 7-12a7 7 0 1 0-14 0c0 4.8 7 12 7 12z"/><circle cx="12" cy="9" r="2.4"/></symbol>
+    <symbol id="icon-instagram" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle class="icon-fill" cx="17" cy="7" r="0.9"/></symbol>
+    <symbol id="icon-facebook" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M14 8.5h-1.8c-.7 0-1.2.5-1.2 1.3V11h3l-.4 2.6h-2.6V20h-2.6v-6.4H8.5V11h1.9V9.4c0-2 1.2-3.4 3.2-3.4H14z" class="icon-fill"/></symbol>
+    <symbol id="icon-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><circle class="icon-fill" cx="12" cy="8" r="0.6"/></symbol>
+    <symbol id="icon-photo" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.4"/><path d="M4.5 16.5 9 12l3.5 3.5L16 12l3.5 3.5"/></symbol>
+    <symbol id="icon-menu-heart" viewBox="0 0 24 24"><path class="icon-fill" d="M12 20.5s-7.8-4.7-9.7-9.4C1 7.7 2.5 4.8 5.6 4.1c2-.5 3.9.4 5 2 .5-.9 1.7-2.3 4-2.1 3.2.3 5.2 3.2 4.1 6.8-1.4 4.7-6.7 9.7-6.7 9.7z"/></symbol>
+    <symbol id="icon-menu" viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></symbol>
+  </defs>
+</svg>
+
+<div class="proto-banner">
+  <p>Modelo B — protótipo para aprovação, duas colunas com resumo fixo. <a href="evento-opcao-a.html">Ver Modelo A →</a></p>
+</div>
+
+<header class="topbar">
+  <div class="shell topbar-inner">
+    <a class="brand-mini" href="homepage-opcao-b.html">
+      <img class="brand-logo" src="logo-ccf-lq.png" alt="Coração Família" />
+    </a>
+    <div class="topbar-end">
+      <input type="checkbox" id="nav-toggle" class="visually-hidden" aria-label="Abrir ou fechar menu de navegação" />
+      <label for="nav-toggle" class="nav-toggle-btn">
+        <svg class="icon icon-menu" aria-hidden="true"><use href="#icon-menu"/></svg>
+        <svg class="icon icon-close" aria-hidden="true"><use href="#icon-x"/></svg>
+      </label>
+      <nav id="site-nav" aria-label="Navegação principal">
+        <a href="homepage-opcao-b.html">Início</a>
+        <a href="homepage-opcao-b.html#agenda">Agenda</a>
+        <a href="#">Sobre</a>
+        <a href="mailto:voluntariado.cf@gmail.com">Contato</a>
+      </nav>
+      <div class="header-social">
+        <a class="icon-circle-link" href="https://www.instagram.com/coracaofamilia/" target="_blank" rel="noopener" aria-label="Instagram"><svg class="icon" aria-hidden="true"><use href="#icon-instagram"/></svg></a>
+        <a class="icon-circle-link" href="https://www.facebook.com/coracaofamilia/" target="_blank" rel="noopener" aria-label="Facebook"><svg class="icon" aria-hidden="true"><use href="#icon-facebook"/></svg></a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <div class="evento-banner-wrap">
+    <div class="shell">
+      <div class="banner">
+        <img src="placeholder/banner-evento.webp" alt="Banner do evento: Feira de Leitura e Troca Comunitária, 10 e 11 de outubro, com convidados Ana Ferreira e Marcos Ribeiro" />
+        <div class="banner-caption">
+          <span class="status-badge status-limited"><svg class="icon" aria-hidden="true"><use href="#icon-alert"/></svg> Vagas limitadas</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="evento-body">
+    <div class="shell evento-layout">
+
+      <!-- Coluna principal -->
+      <div class="evento-main-col">
+        <div>
+          <h1 class="event-title">Feira de trocas comunitária (evento ilustrativo)</h1>
+          <p class="event-desc" style="margin-top: var(--ccf-space-4);">
+            Encontro ilustrativo para reunir famílias em torno da troca de roupas, brinquedos e
+            utensílios, com oficinas paralelas para crianças. Todos os nomes, horários e números
+            deste exemplo são fictícios — servem só para mostrar como a página de um evento real
+            se comportaria com todos os campos preenchidos.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="block-title">Programação</h2>
+          <div class="day-tabs" role="tablist" aria-label="Dias do evento">
+            <button type="button" class="day-tab" role="tab" aria-selected="true">Dia 1 — 10/10</button>
+            <button type="button" class="day-tab" role="tab" aria-selected="false">Dia 2 — 11/10</button>
+          </div>
+          <div class="schedule">
+            <div class="schedule-item"><div class="schedule-time">09h00</div><div class="schedule-content"><h4>Abertura e acolhida</h4><p>Recepção das famílias na entrada da sede.</p></div></div>
+            <div class="schedule-item"><div class="schedule-time">10h00</div><div class="schedule-content"><h4>Troca de roupas e brinquedos</h4><p>Mesas organizadas por faixa etária.</p></div></div>
+            <div class="schedule-item"><div class="schedule-time">11h30</div><div class="schedule-content"><h4>Oficina para crianças</h4><p>Atividade paralela, com convidados ilustrativos abaixo.</p></div></div>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="block-title">Convidados</h2>
+          <div class="guest-grid">
+            <div class="guest-card">
+              <div class="guest-avatar guest-avatar-photo"><img src="placeholder/ana-ferreira.webp" alt="" /></div>
+              <div><div class="guest-name">Ana Ferreira (ilustrativo)</div><div class="guest-role">Educadora social</div></div>
+              <p class="guest-bio">Conduz a oficina de crianças com dinâmicas de troca e cooperação.</p>
+            </div>
+            <div class="guest-card">
+              <div class="guest-avatar guest-avatar-photo"><img src="placeholder/marcos-ribeiro.webp" alt="" /></div>
+              <div><div class="guest-name">Marcos Ribeiro (ilustrativo)</div><div class="guest-role">Voluntário de logística</div></div>
+              <p class="guest-bio">Organiza a chegada e a triagem dos itens doados para a troca.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Coluna lateral: cartão-resumo sticky -->
+      <aside class="evento-side-col">
+        <div class="card evento-summary-card">
+          <div class="header-with-date">
+            <div class="date-badge"><span class="day">10</span><span class="month">out</span></div>
+            <div class="meta-row"><svg class="icon" aria-hidden="true"><use href="#icon-calendar"/></svg> 10 e 11 de outubro</div>
+          </div>
+
+          <span class="status-badge status-limited" style="align-self:flex-start;"><svg class="icon" aria-hidden="true"><use href="#icon-alert"/></svg> Vagas limitadas</span>
+
+          <div>
+            <h2 class="block-title">Local</h2>
+            <div class="location-block">
+              <svg class="icon" aria-hidden="true"><use href="#icon-pin"/></svg>
+              <div>
+                <div>Rua Calasans, 200, Vila Santa Catarina, São Paulo, SP, CEP 04369-100</div>
+                <span class="confirm-note"><svg class="icon" aria-hidden="true"><use href="#icon-info"/></svg> Confirmar com a organização antes de publicar</span>
+                <div class="map-embed">
+                  <iframe src="https://www.google.com/maps?q=Rua+Calasans%2C+200%2C+Vila+Santa+Catarina%2C+S%C3%A3o+Paulo%2C+SP%2C+CEP+04369-100&#38;output=embed" title="Mapa: Rua Calasans, 200, Vila Santa Catarina, São Paulo, SP" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+                <a class="map-route-link" href="https://www.google.com/maps/dir/?api=1&#38;destination=Rua+Calasans%2C+200%2C+Vila+Santa+Catarina%2C+S%C3%A3o+Paulo%2C+SP%2C+CEP+04369-100" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#icon-external"/></svg> Ver rota</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="cta-row">
+            <a class="btn btn-primary" href="https://wa.me/5511981218419?text=%5BProt%C3%B3tipo%2C%20pode%20ignorar%5D%20Testando%20o%20bot%C3%A3o%20de%20inscri%C3%A7%C3%A3o.%20Este%20evento%20%C3%A9%20fict%C3%ADcio." target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#icon-external"/></svg> Inscreva-se</a>
+            <a class="btn btn-outline" href="#"><svg class="icon" aria-hidden="true"><use href="#icon-share"/></svg> Compartilhar</a>
+            <a class="btn btn-outline" href="#"><svg class="icon" aria-hidden="true"><use href="#icon-calendar"/></svg> Adicionar à agenda</a>
+          </div>
+        </div>
+      </aside>
+
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer-shell">
+  <div class="shell">
+    <div class="footer-demo">
+      <div>
+        <span class="footer-icon"><img src="icon-ccf.png" alt="Coração Família" /></span>
+        <h5>Centro de Convivência Familiar Coração Família</h5>
+        <p>Organização sem fins lucrativos na Vila Santa Catarina, Zona Sul de São Paulo.</p>
+        <div class="social-links">
+          <a href="https://www.instagram.com/coracaofamilia/" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#icon-instagram"/></svg><span class="visually-hidden">Instagram</span></a>
+          <a href="https://www.facebook.com/coracaofamilia/" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#icon-facebook"/></svg><span class="visually-hidden">Facebook</span></a>
+        </div>
+      </div>
+      <div class="addr">
+        <h5>Endereço</h5>
+        <div>Rua Calasans, 200</div>
+        <div>Vila Santa Catarina, São Paulo, SP</div>
+        <div>CEP 04369-100</div>
+        <span class="confirm-note" style="margin-top: var(--ccf-space-2);"><svg class="icon" aria-hidden="true"><use href="#icon-info"/></svg> Confirmar com a organização antes de publicar</span>
+      </div>
+    </div>
+    <p class="footer-credit">Desenvolvido com <svg class="icon" aria-hidden="true" style="color: var(--ccf-color-coral); width: 0.9em; height: 0.9em; vertical-align: -0.05em;"><use href="#icon-menu-heart"/></svg><span class="visually-hidden">amor</span> por <a href="https://www.hiperbold.com.br" target="_blank" rel="noopener nofollow">Hiperbold</a>.</p>
+  </div>
+</footer>
+
+</body>
+</html>
