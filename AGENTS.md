@@ -9,6 +9,7 @@
 - Instagram: https://www.instagram.com/coracaofamilia/
 - Facebook: https://www.facebook.com/coracaofamilia/
 - Referência adicional fornecida: https://share.google/gYrAjL0YEsZpvqOnq
+- Contato (voluntariado), fornecido pelo Filipe em 25/09/2026: e-mail `voluntariado.cf@gmail.com`; WhatsApp `+55 11 98121-8419`. Usar em link `mailto:` e `https://wa.me/5511981218419` onde o site precisar de contato real (nav "Contato", CTA de inscrição sem link próprio do evento, etc.).
 
 ## Marca fornecida
 
