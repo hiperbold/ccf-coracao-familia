@@ -57,7 +57,7 @@ O bloco de local sempre vem com um mini-mapa (embed do Google Maps, sem chave de
 
 Banner de evento e fotos de convidado devem ser convertidas para WebP no momento do upload (painel administrativo), guardando só a versão web; o arquivo original enviado não fica armazenado, para economizar espaço em disco. Detalhar o pipeline exato (biblioteca de conversão, tamanhos gerados) quando a implementação do Payload começar.
 
-Placeholders de imagem usados no design system ficam em `placeholder/` (fora do fluxo real do produto, só para a documentação viva): `Beatriz-Nunes.webp` (foto de convidado) e `banner-evento.webp` (banner de evento, 16:9).
+Placeholders de imagem ficam em `placeholder/` (fora do fluxo real do produto, só ilustrativo): `Beatriz-Nunes.webp` (convidada avulsa, usada no design system), `banner-evento.webp` (banner de evento, 16:9, evento "Feira de trocas comunitária"), `ana-ferreira.webp` e `marcos-ribeiro.webp` (fotos dos dois convidados desse mesmo evento ilustrativo — usar nas páginas de evento).
 
 ## Pesquisa inicial de referências (2026-09-25)
 
