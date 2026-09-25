@@ -1,0 +1,1959 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CCF — Design System da Agenda</title>
+<meta name="description" content="Design system vivo do Centro de Convivência Familiar Coração Família, focado na futura Agenda de eventos." />
+
+<!-- Favicon ainda não gerado: peça própria (círculo vermelho sólido com coração branco
+     simplificado), não é um recorte de icon-ccf.png — ver AGENTS.md. -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="ccf_design_tokens.css">
+
+<style>
+  /* ==========================================================================
+     CCF — Design System (documento vivo)
+     Este bloco é só CSS estrutural (grid, flex, tamanhos de layout).
+     Toda cor, raio, sombra, espaçamento e fonte vem de var(--ccf-...),
+     definidos em ccf_design_tokens.css. Nada de hex/rgb/px de cor aqui.
+     ========================================================================== */
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--ccf-font-sans);
+    color: var(--ccf-color-text);
+    background: var(--ccf-color-background);
+    line-height: var(--ccf-line-height-normal);
+  }
+
+  a { color: inherit; }
+  img { max-width: 100%; display: block; }
+
+  h1, h2, h3, h4, h5 {
+    font-family: var(--ccf-font-display);
+    margin: 0;
+    line-height: var(--ccf-line-height-tight);
+    letter-spacing: var(--ccf-letter-spacing-tight);
+  }
+
+  p { margin: 0; }
+
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  /* Foco visível — nunca :focus sozinho, nunca outline:none sem substituto */
+  :focus { outline: none; }
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  .btn:focus-visible,
+  .day-tab:focus-visible,
+  .event-card:focus-visible,
+  [tabindex]:focus-visible {
+    outline: none;
+    box-shadow: var(--ccf-focus-ring);
+  }
+
+  .shell {
+    width: min(calc(100% - (var(--ccf-page-gutter) * 2)), var(--ccf-content-width));
+    margin-inline: auto;
+  }
+
+  /* Compensa o cabeçalho fixo (sticky) para que o título de destino não
+     fique escondido atrás dele ao navegar por âncora. */
+  #marca, #cores, #tipografia, #acessibilidade, #componentes, #estados-vazios, #tokens,
+  #detalhe-evento, #horarios, #local {
+    scroll-margin-top: calc(var(--ccf-space-16) + var(--ccf-space-4));
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* --- Ícones (sprite) --------------------------------------------------
+     "display: none" no sprite quebra o <use> em alguns motores (o símbolo
+     referenciado deixa de renderizar). Escondido por posição/tamanho, não
+     por display, para que os ícones usados em qualquer lugar da página
+     continuem funcionando. */
+  .icon-sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+  .icon { width: 1em; height: 1em; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .icon-fill { fill: currentColor; stroke: none; }
+
+  /* --- Header / nav ------------------------------------------------------ */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: var(--ccf-z-header);
+    backdrop-filter: blur(var(--ccf-header-blur));
+    background: var(--ccf-header-bg);
+    border-bottom: 1px solid var(--ccf-header-border);
+  }
+
+  .topbar-inner {
+    position: relative;
+    min-height: var(--ccf-space-16);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--ccf-space-6);
+    padding-block: var(--ccf-space-3);
+  }
+
+  .brand-mini {
+    display: flex;
+    align-items: center;
+    gap: var(--ccf-space-3);
+    text-decoration: none;
+    font-weight: var(--ccf-font-weight-black);
+    font-family: var(--ccf-font-sans);
+    color: var(--ccf-color-text);
+    font-size: var(--ccf-text-sm);
+  }
+
+  .brand-icon {
+    width: var(--ccf-space-10);
+    height: var(--ccf-space-10);
+    border-radius: var(--ccf-radius-full);
+    background: var(--ccf-p-graphite-900);
+    padding: var(--ccf-space-1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+  }
+
+  .brand-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  #site-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ccf-space-1);
+  }
+
+  #site-nav a {
+    text-decoration: none;
+    font-size: var(--ccf-text-sm);
+    font-weight: var(--ccf-font-weight-bold);
+    color: var(--ccf-nav-link-fg);
+    padding: var(--ccf-space-2) var(--ccf-space-3);
+    border-radius: var(--ccf-radius-full);
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--ccf-button-min-height);
+  }
+
+  #site-nav a:hover {
+    color: var(--ccf-nav-link-fg-hover);
+    background: var(--ccf-nav-link-bg-hover);
+  }
+
+  /* O checkbox #nav-toggle fica visualmente oculto (.visually-hidden); quem
+     aparece como botão é o <label for="nav-toggle">, com dois ícones SVG
+     (hambúrguer/fechar) alternados via #nav-toggle:checked. Pseudo-elemento
+     com content em <input> não é confiável entre navegadores — por isso não
+     usamos mais essa técnica aqui. */
+  .nav-toggle-btn {
+    display: none;
+    width: var(--ccf-button-min-height);
+    height: var(--ccf-button-min-height);
+    border-radius: var(--ccf-radius-md);
+    border: 1px solid var(--ccf-color-primary);
+    background: var(--ccf-color-soft-primary);
+    color: var(--ccf-color-primary-strong);
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    flex: none;
+  }
+
+  .nav-toggle-btn .icon { width: 1.25rem; height: 1.25rem; }
+  .nav-toggle-btn .icon-close { display: none; }
+  #nav-toggle:checked ~ .nav-toggle-btn .icon-menu { display: none; }
+  #nav-toggle:checked ~ .nav-toggle-btn .icon-close { display: block; }
+
+  /* O checkbox real recebe o foco de teclado; o anel de foco aparece no
+     label visível, que é quem representa o botão na tela. */
+  #nav-toggle:focus-visible ~ .nav-toggle-btn {
+    outline: none;
+    box-shadow: var(--ccf-focus-ring);
+  }
+
+  @media (max-width: 767px) {
+    .nav-toggle-btn { display: flex; }
+    #site-nav {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      background: var(--ccf-color-surface);
+      border: 1px solid var(--ccf-color-border);
+      border-radius: var(--ccf-radius-lg);
+      padding: var(--ccf-space-2);
+      margin-top: var(--ccf-space-2);
+      box-shadow: var(--ccf-shadow-md);
+    }
+    #nav-toggle:checked ~ #site-nav { display: flex; }
+    #site-nav a { width: 100%; }
+  }
+
+  /* --- Hero --------------------------------------------------------------- */
+  .hero { padding: var(--ccf-space-16) 0 var(--ccf-space-12); }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: var(--ccf-space-12);
+    align-items: center;
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--ccf-space-2);
+    font-size: var(--ccf-text-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--ccf-letter-spacing-wide);
+    font-weight: var(--ccf-font-weight-black);
+    color: var(--ccf-color-primary-strong);
+    background: var(--ccf-color-soft-primary);
+    padding: var(--ccf-space-2) var(--ccf-space-3);
+    border-radius: var(--ccf-radius-full);
+  }
+
+  .hero h1 {
+    font-size: var(--ccf-text-h1);
+    margin: var(--ccf-space-6) 0;
+    max-width: 34ch;
+  }
+
+  .hero-lead {
+    font-size: var(--ccf-text-lg);
+    max-width: 56ch;
+    color: var(--ccf-color-text-muted);
+  }
+
+  .hero-note {
+    margin-top: var(--ccf-space-4);
+    font-size: var(--ccf-text-sm);
+    color: var(--ccf-color-text-muted);
+  }
+
+  .hero-note code {
+    color: var(--ccf-color-primary-strong);
+  }
+
+  .hero-card {
+    background: var(--ccf-color-surface);
+    border-radius: var(--ccf-radius-2xl);
+    padding: var(--ccf-space-10);
+    box-shadow: var(--ccf-shadow-md);
+    border: 1px solid var(--ccf-color-border);
+    display: grid;
+    place-items: center;
+    min-height: 22rem;
+  }
+
+  .hero-logo { width: min(100%, 20rem); }
+
+  /* --- Botões --------------------------------------------------------- */
+  .btn {
+    appearance: none;
+    border: 0;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--ccf-space-2);
+    min-height: var(--ccf-button-min-height);
+    padding: 0 var(--ccf-button-padding-x);
+    border-radius: var(--ccf-button-radius);
+    font: var(--ccf-button-font);
+    cursor: pointer;
+    transition: transform var(--ccf-duration-base) var(--ccf-easing-standard);
+  }
+
+  .btn:hover { transform: translateY(-1px); }
+  .btn .icon { font-size: 1.1em; }
+
+  .btn-primary {
+    background: var(--ccf-button-primary-bg);
+    color: var(--ccf-button-primary-fg);
+    box-shadow: var(--ccf-button-primary-shadow);
+  }
+  .btn-primary:hover { background: var(--ccf-button-primary-bg-hover); }
+  .btn-primary:active { background: var(--ccf-button-primary-bg-active); }
+
+  .btn-secondary {
+    background: var(--ccf-button-secondary-bg);
+    color: var(--ccf-button-secondary-fg);
+  }
+  .btn-secondary:hover { background: var(--ccf-button-secondary-bg-hover); }
+
+  .btn-outline {
+    background: var(--ccf-button-outline-bg);
+    color: var(--ccf-button-outline-fg);
+    border: 1px solid var(--ccf-button-outline-border);
+  }
+
+  .btn-soft {
+    background: var(--ccf-button-soft-bg);
+    color: var(--ccf-button-soft-fg);
+  }
+
+  /* --- Layout geral de seção ------------------------------------------- */
+  section { padding: var(--ccf-space-20) 0; }
+  section + section { border-top: 1px solid var(--ccf-color-border); }
+
+  .section-head {
+    display: grid;
+    grid-template-columns: 0.75fr 1.25fr;
+    gap: var(--ccf-space-8);
+    align-items: end;
+    margin-bottom: var(--ccf-space-10);
+  }
+
+  .section-head h2 { font-size: var(--ccf-text-h2); }
+  .section-head p { color: var(--ccf-color-text-muted); font-size: var(--ccf-text-lg); }
+
+  .grid { display: grid; gap: var(--ccf-space-5); }
+  .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .grid-auto { grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); }
+
+  @media (max-width: 900px) {
+    .hero-grid, .section-head, .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; }
+  }
+
+  /* --- Cartão base ------------------------------------------------------- */
+  .card {
+    background: var(--ccf-card-bg);
+    border: 1px solid var(--ccf-card-border);
+    border-radius: var(--ccf-card-radius);
+    padding: var(--ccf-card-padding);
+    box-shadow: var(--ccf-card-shadow);
+  }
+
+  /* --- Bloco de demonstração (moldura neutra em torno dos componentes) --- */
+  .demo {
+    background: var(--ccf-color-surface-alt);
+    border: 1px solid var(--ccf-color-border);
+    border-radius: var(--ccf-radius-xl);
+    padding: var(--ccf-space-6);
+  }
+
+  .component-block { margin-bottom: var(--ccf-space-16); }
+  .component-block:last-child { margin-bottom: 0; }
+
+  .component-block h3 {
+    font-size: var(--ccf-text-2xl);
+    margin-bottom: var(--ccf-space-2);
+  }
+
+  .component-block .hint {
+    color: var(--ccf-color-text-muted);
+    max-width: var(--ccf-reading-width);
+    margin-bottom: var(--ccf-space-5);
+  }
+
+  .tag-example {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--ccf-space-1);
+    font-size: var(--ccf-text-xs);
+    font-weight: var(--ccf-font-weight-black);
+    text-transform: uppercase;
+    letter-spacing: var(--ccf-letter-spacing-wide);
+    color: var(--ccf-color-primary-strong);
+    background: var(--ccf-color-soft-primary);
+    padding: var(--ccf-space-1) var(--ccf-space-3);
+    border-radius: var(--ccf-radius-full);
+    margin-bottom: var(--ccf-space-6);
+  }
+
+  .subgrid-gap { display: grid; gap: var(--ccf-space-5); }
+
+  /* --- Swatches de cor ---------------------------------------------------- */
+  .swatch {
+    border-radius: var(--ccf-radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--ccf-color-border);
+    background: var(--ccf-color-surface);
+  }
+
+  .swatch-fill {
+    height: 6rem;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: var(--ccf-space-3);
+  }
+
+  .swatch-tag {
+    font-size: var(--ccf-text-xs);
+    font-weight: var(--ccf-font-weight-black);
+    letter-spacing: var(--ccf-letter-spacing-wide);
+    text-transform: uppercase;
+    padding: var(--ccf-space-1) var(--ccf-space-2);
+    border-radius: var(--ccf-radius-sm);
+    background: var(--ccf-color-surface);
+    box-shadow: var(--ccf-shadow-sm);
+  }
+
+  .swatch-tag.is-marca { color: var(--ccf-p-graphite-900); }
+  .swatch-tag.is-interface { color: var(--ccf-color-secondary); }
+
+  .swatch-body { padding: var(--ccf-space-4); }
+  .swatch-body .name { font-weight: var(--ccf-font-weight-bold); font-size: var(--ccf-text-sm); margin-bottom: var(--ccf-space-1); }
+  .swatch-body code { font-size: var(--ccf-text-xs); color: var(--ccf-color-text-muted); display: block; margin-bottom: var(--ccf-space-2); }
+  .swatch-body .desc { font-size: var(--ccf-text-xs); color: var(--ccf-color-text-muted); }
+
+  /* --- Comparativo de contraste (verde 500 x 700) ------------------------ */
+  .contrast-pair { display: grid; grid-template-columns: 1fr 1fr; gap: var(--ccf-space-5); }
+  .contrast-tile {
+    border-radius: var(--ccf-radius-lg);
+    padding: var(--ccf-space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--ccf-space-3);
+  }
+  .contrast-tile .ratio { font-family: var(--ccf-font-display); font-size: var(--ccf-text-2xl); font-weight: var(--ccf-font-weight-bold); }
+  .contrast-tile .verdict { font-size: var(--ccf-text-sm); font-weight: var(--ccf-font-weight-bold); }
+  @media (max-width: 700px) { .contrast-pair { grid-template-columns: 1fr; } }
+
+  /* --- Tipografia ----------------------------------------------------- */
+  .type-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--ccf-space-6);
+    padding: var(--ccf-space-4) 0;
+    border-bottom: 1px solid var(--ccf-color-border);
+  }
+  .type-row:last-child { border-bottom: 0; }
+  .type-row .sample { flex: 1; }
+  .type-row .meta { flex: none; text-align: right; font-size: var(--ccf-text-xs); color: var(--ccf-color-text-muted); }
+  .type-row .meta code { display: block; }
+
+  .weight-row { display: flex; flex-wrap: wrap; gap: var(--ccf-space-6); align-items: baseline; }
+  .weight-sample { font-size: var(--ccf-text-xl); }
+
+  /* --- Escalas de espaçamento / raio / sombra --------------------------- */
+  .scale-row { display: flex; align-items: center; gap: var(--ccf-space-4); margin-bottom: var(--ccf-space-3); }
+  .scale-row:last-child { margin-bottom: 0; }
+  .scale-row code { width: 8rem; flex: none; font-size: var(--ccf-text-xs); color: var(--ccf-color-text-muted); }
+  .scale-bar {
+    height: var(--ccf-space-3);
+    background: var(--ccf-color-primary);
+    border-radius: var(--ccf-radius-sm);
+  }
+
+  .radius-demo { display: flex; flex-wrap: wrap; gap: var(--ccf-space-5); }
+  .radius-tile {
+    width: var(--ccf-space-16);
+    height: var(--ccf-space-16);
+    background: var(--ccf-color-soft-secondary);
+    border: 1px solid var(--ccf-color-border-strong);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: var(--ccf-space-1);
+  }
+  .radius-tile span { font-size: var(--ccf-text-xs); color: var(--ccf-color-text-muted); }
+
+  .shadow-demo { display: flex; flex-wrap: wrap; gap: var(--ccf-space-8); }
+  .shadow-tile {
+    width: 9rem; height: 6rem;
+    background: var(--ccf-color-surface);
+    border-radius: var(--ccf-radius-lg);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: var(--ccf-space-2);
+    font-size: var(--ccf-text-xs);
+    color: var(--ccf-color-text-muted);
+  }
+
+  /* --- Acessibilidade ---------------------------------------------------- */
+  .table-wrap { overflow-x: auto; border-radius: var(--ccf-radius-lg); border: 1px solid var(--ccf-color-border); }
+  table { width: 100%; border-collapse: collapse; background: var(--ccf-color-surface); }
+  th, td { padding: var(--ccf-space-3) var(--ccf-space-4); text-align: left; border-bottom: 1px solid var(--ccf-color-border); font-size: var(--ccf-text-sm); }
+  thead th {
+    background: var(--ccf-color-surface-alt);
+    text-transform: uppercase;
+    letter-spacing: var(--ccf-letter-spacing-wide);
+    font-size: var(--ccf-text-xs);
+    color: var(--ccf-color-text-muted);
+  }
+  tbody tr:last-child td { border-bottom: 0; }
+
+  .focus-demo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--ccf-space-4);
+    padding: var(--ccf-space-8);
+  }
+
+  .a11y-principles { display: grid; gap: var(--ccf-space-5); grid-template-columns: repeat(2, minmax(0,1fr)); }
+  @media (max-width: 700px) { .a11y-principles { grid-template-columns: 1fr; } }
+  .a11y-principle { display: flex; gap: var(--ccf-space-3); }
+  .a11y-principle .icon { width: 1.5rem; height: 1.5rem; color: var(--ccf-color-primary-strong); margin-top: var(--ccf-space-1); }
+
+  pre {
+    background: var(--ccf-p-graphite-900);
+    color: var(--ccf-color-text-on-dark);
+    padding: var(--ccf-space-5);
+    border-radius: var(--ccf-radius-lg);
+    overflow-x: auto;
+    font-size: var(--ccf-text-xs);
+    line-height: var(--ccf-line-height-normal);
+  }
+
+  /* --- Etiqueta de data --------------------------------------------------- */
+  .date-badge {
+    width: var(--ccf-date-badge-size);
+    height: var(--ccf-date-badge-size);
+    border-radius: var(--ccf-date-badge-radius);
+    background: var(--ccf-date-badge-bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+  }
+  .date-badge .day { font-family: var(--ccf-font-display); font-size: var(--ccf-text-xl); font-weight: var(--ccf-font-weight-bold); color: var(--ccf-date-badge-fg-day); line-height: 1; }
+  .date-badge .month { font-size: var(--ccf-text-2xs); text-transform: uppercase; letter-spacing: var(--ccf-letter-spacing-wide); color: var(--ccf-date-badge-fg-month); }
+
+  /* --- Etiquetas de status ------------------------------------------------ */
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--ccf-space-1);
+    padding: var(--ccf-space-1) var(--ccf-space-3);
+    border-radius: var(--ccf-radius-full);
+    font-size: var(--ccf-text-xs);
+    font-weight: var(--ccf-font-weight-bold);
+  }
+  .status-badge .icon { width: 0.9rem; height: 0.9rem; }
+  .status-open      { background: var(--ccf-status-open-bg);      color: var(--ccf-status-open-fg); }
+  .status-limited   { background: var(--ccf-status-limited-bg);   color: var(--ccf-status-limited-fg); }
+  .status-full      { background: var(--ccf-status-full-bg);      color: var(--ccf-status-full-fg); }
+  .status-changed   { background: var(--ccf-status-changed-bg);   color: var(--ccf-status-changed-fg); }
+  .status-cancelled { background: var(--ccf-status-cancelled-bg); color: var(--ccf-status-cancelled-fg); }
+
+  .status-showcase { display: flex; flex-wrap: wrap; gap: var(--ccf-space-3); }
+
+  /* --- Card de evento ------------------------------------------------------ */
+  .event-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--ccf-card-bg);
+    border: 1px solid var(--ccf-card-border);
+    border-radius: var(--ccf-card-radius);
+    overflow: hidden;
+    box-shadow: var(--ccf-card-shadow);
+    text-decoration: none;
+    color: inherit;
+    transition: box-shadow var(--ccf-duration-base) var(--ccf-easing-standard);
+  }
+  .event-card:hover { box-shadow: var(--ccf-card-shadow-hover); }
+
+  .event-card-image {
+    aspect-ratio: var(--ccf-event-card-image-ratio);
+    width: 100%;
+    object-fit: cover;
+    background: var(--ccf-color-soft-primary);
+  }
+
+  .photo-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--ccf-space-2);
+    background: var(--ccf-color-soft-secondary);
+    color: var(--ccf-color-secondary);
+    font-size: var(--ccf-text-xs);
+    text-align: center;
+    padding: var(--ccf-space-4);
+  }
+  .photo-placeholder .icon { width: 2rem; height: 2rem; }
+
+  .event-card-noimage {
+    aspect-ratio: var(--ccf-event-card-image-ratio);
+    width: 100%;
+    background: var(--ccf-color-soft-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ccf-color-primary-strong);
+    font-family: var(--ccf-font-display);
+    font-size: var(--ccf-text-sm);
+    text-align: center;
+    padding: var(--ccf-space-4);
+  }
+
+  .event-card-top {
+    display: flex;
+    gap: var(--ccf-space-4);
+    align-items: flex-start;
+    padding: var(--ccf-card-padding) var(--ccf-card-padding) 0;
+  }
+
+  .event-card-body {
+    padding: var(--ccf-card-padding);
+    display: flex;
+    flex-direction: column;
+    gap: var(--ccf-space-2);
+  }
+
+  .event-card h4 { font-size: var(--ccf-text-xl); }
+
+  .event-card .meta-row {
+    display: flex;
+    align-items: center;
+    gap: var(--ccf-space-2);
+    font-size: var(--ccf-text-sm);
+    color: var(--ccf-color-text-muted);
+  }
+  .event-card .meta-row .icon { color: var(--ccf-color-text-muted); }
+
+  /* --- Trilho cronológico -------------------------------------------------- */
+  .timeline {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--ccf-space-8);
+    padding-left: var(--ccf-space-8);
+  }
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: calc((var(--ccf-timeline-node-size) - var(--ccf-timeline-line-width)) / 2);
+    top: var(--ccf-space-2);
+    bottom: var(--ccf-space-2);
+    width: var(--ccf-timeline-line-width);
+    background: var(--ccf-timeline-line);
+  }
+  .timeline-item {
+    position: relative;
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+  .timeline-item::before {
+    content: "";
+    position: absolute;
+    left: calc(-1 * var(--ccf-space-8));
+    top: var(--ccf-space-2);
+    width: var(--ccf-timeline-node-size);
+    height: var(--ccf-timeline-node-size);
+    border-radius: var(--ccf-radius-full);
+    background: var(--ccf-timeline-node-bg);
+    box-shadow: 0 0 0 var(--ccf-space-1) var(--ccf-timeline-node-ring);
+  }
+  .timeline-card {
+    display: flex;
+    align-items: center;
+    gap: var(--ccf-space-4);
+    background: var(--ccf-card-bg);
+    border: 1px solid var(--ccf-card-border);
+    border-radius: var(--ccf-radius-lg);
+    padding: var(--ccf-space-4);
+    box-shadow: var(--ccf-card-shadow);
+    transition: box-shadow var(--ccf-duration-base) var(--ccf-easing-standard);
+  }
+  .timeline-item:hover .timeline-card { box-shadow: var(--ccf-card-shadow-hover); }
+  .timeline-card h4 { font-size: var(--ccf-text-lg); margin-bottom: var(--ccf-space-1); }
+  .timeline-card .meta-row { display: flex; gap: var(--ccf-space-2); align-items: center; font-size: var(--ccf-text-sm); color: var(--ccf-color-text-muted); }
+
+  /* --- Abas de dia ---------------------------------------------------------- */
+  .day-tabs { display: flex; gap: var(--ccf-space-2); flex-wrap: wrap; margin-bottom: var(--ccf-space-5); }
+  .day-tab {
+    appearance: none;
+    border: 1px solid var(--ccf-color-border);
+    background: var(--ccf-day-tab-bg);
+    color: var(--ccf-day-tab-fg);
+    border-radius: var(--ccf-day-tab-radius);
+    padding: var(--ccf-space-2) var(--ccf-space-5);
+    font: var(--ccf-font-weight-bold) var(--ccf-text-sm) / 1 var(--ccf-font-sans);
+    cursor: default;
+    min-height: var(--ccf-button-min-height);
+  }
+  .day-tab[aria-selected="true"] {
+    background: var(--ccf-day-tab-bg-active);
+    color: var(--ccf-day-tab-fg-active);
+    border-color: transparent;
+  }
+
+  /* --- Programação (linha do tempo do dia) ---------------------------------- */
+  .schedule { display: flex; flex-direction: column; }
+  .schedule-item {
+    display: flex;
+    gap: var(--ccf-space-4);
+    padding: var(--ccf-space-4) 0;
+    border-bottom: 1px solid var(--ccf-schedule-divider);
+  }
+  .schedule-item:last-child { border-bottom: 0; }
+  .schedule-time {
+    width: var(--ccf-schedule-time-width);
+    flex: none;
+    font-weight: var(--ccf-font-weight-bold);
+    color: var(--ccf-color-primary-strong);
+    font-size: var(--ccf-text-sm);
+  }
+  .schedule-content h4 { font-size: var(--ccf-text-base); margin-bottom: var(--ccf-space-1); }
+  .schedule-content p { color: var(--ccf-color-text-muted); font-size: var(--ccf-text-sm); }
+
+  /* --- Convidados ------------------------------------------------------------ */
+  .guest-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: var(--ccf-space-6); }
+  .guest-card { display: flex; flex-direction: column; align-items: flex-start; gap: var(--ccf-space-3); }
+  .guest-avatar {
+    width: var(--ccf-guest-avatar-size);
+    height: var(--ccf-guest-avatar-size);
+    border-radius: var(--ccf-guest-avatar-radius);
+    background: var(--ccf-color-soft-primary);
+    color: var(--ccf-color-primary-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--ccf-font-display);
+    font-weight: var(--ccf-font-weight-bold);
+    font-size: var(--ccf-text-lg);
+    flex: none;
+    overflow: hidden;
+  }
+  .guest-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* Variante maior, só para demonstrar o placeholder de foto real (ícone +
+     legenda) — o avatar com iniciais continua sendo o padrão documentado
+     para quando não há foto disponível. */
+  .guest-avatar-photo {
+    width: calc(var(--ccf-guest-avatar-size) * 1.7);
+    height: calc(var(--ccf-guest-avatar-size) * 1.7);
+    border-radius: var(--ccf-radius-lg);
+    padding: var(--ccf-space-2);
+  }
+  .guest-avatar-photo .icon { width: 1.5rem; height: 1.5rem; }
+  .guest-name { font-weight: var(--ccf-font-weight-bold); color: var(--ccf-guest-name-fg); }
+  .guest-role { font-size: var(--ccf-text-sm); font-weight: var(--ccf-font-weight-semibold); color: var(--ccf-guest-role-fg); }
+  .guest-bio { font-size: var(--ccf-text-sm); color: var(--ccf-guest-bio-fg); }
+
+  /* --- Banner do evento -------------------------------------------------------- */
+  .banner {
+    position: relative;
+    border-radius: var(--ccf-banner-radius);
+    overflow: hidden;
+    aspect-ratio: var(--ccf-banner-ratio);
+    background: var(--ccf-color-soft-secondary);
+  }
+  .banner img { width: 100%; height: 100%; object-fit: cover; }
+  .banner::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--ccf-banner-overlay);
+  }
+  .banner-caption {
+    position: absolute;
+    left: var(--ccf-space-6);
+    right: var(--ccf-space-6);
+    bottom: var(--ccf-space-6);
+    color: var(--ccf-banner-caption-fg);
+    z-index: 1;
+  }
+  .banner-noimg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* --- Local ---------------------------------------------------------------- */
+  .location-block { display: flex; gap: var(--ccf-space-4); align-items: flex-start; }
+  .location-block .icon { width: 1.5rem; height: 1.5rem; color: var(--ccf-color-primary-strong); margin-top: var(--ccf-space-1); flex: none; }
+  .confirm-note {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--ccf-space-1);
+    margin-top: var(--ccf-space-2);
+    font-size: var(--ccf-text-xs);
+    color: var(--ccf-color-warning-text);
+    background: var(--ccf-color-soft-warning);
+    padding: var(--ccf-space-1) var(--ccf-space-2);
+    border-radius: var(--ccf-radius-sm);
+  }
+
+  /* --- Detalhe completo do evento (mockup de página) ------------------------ */
+  .page-mock {
+    border: 1px solid var(--ccf-color-border);
+    border-radius: var(--ccf-radius-2xl);
+    background: var(--ccf-color-surface);
+    padding: var(--ccf-space-8);
+    box-shadow: var(--ccf-shadow-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--ccf-space-8);
+  }
+  .page-mock .badges-row { display: flex; gap: var(--ccf-space-3); align-items: center; flex-wrap: wrap; }
+  .page-mock .mock-title { font-size: var(--ccf-text-h2); }
+  .page-mock .desc { max-width: var(--ccf-reading-width); color: var(--ccf-color-text); font-size: var(--ccf-text-base); }
+  .block-title {
+    display: block;
+    font-family: var(--ccf-font-sans);
+    font-size: var(--ccf-text-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--ccf-letter-spacing-wide);
+    font-weight: var(--ccf-font-weight-black);
+    color: var(--ccf-color-text-muted);
+    margin-bottom: var(--ccf-space-4);
+  }
+  .page-mock .cta-row { display: flex; gap: var(--ccf-space-3); flex-wrap: wrap; }
+  .header-with-date { display: flex; gap: var(--ccf-space-4); align-items: center; }
+
+  /* --- Rodapé institucional (demonstração dentro da seção) -------------------- */
+  .footer-demo {
+    background: var(--ccf-footer-bg);
+    color: var(--ccf-footer-fg);
+    border-radius: var(--ccf-card-radius);
+    padding: var(--ccf-space-10);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--ccf-space-8);
+  }
+  .footer-demo .footer-icon {
+    width: var(--ccf-button-min-height);
+    height: var(--ccf-button-min-height);
+    border-radius: var(--ccf-radius-full);
+    margin-bottom: var(--ccf-space-4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .footer-demo .footer-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .footer-demo p { color: var(--ccf-footer-fg-muted); font-size: var(--ccf-text-sm); max-width: 32ch; }
+  .footer-demo .social-links { display: flex; gap: var(--ccf-space-3); margin-top: var(--ccf-space-4); }
+  .footer-demo .social-links a {
+    width: var(--ccf-button-min-height);
+    height: var(--ccf-button-min-height);
+    border-radius: var(--ccf-radius-full);
+    border: 1px solid var(--ccf-footer-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ccf-footer-fg);
+    text-decoration: none;
+  }
+  .footer-demo .social-links a:hover { color: var(--ccf-footer-link-fg-hover); }
+  .footer-demo .addr { display: flex; flex-direction: column; gap: var(--ccf-space-1); font-size: var(--ccf-text-sm); color: var(--ccf-footer-fg-muted); }
+  .footer-demo h5 { color: var(--ccf-footer-fg); font-size: var(--ccf-text-lg); margin-bottom: var(--ccf-space-3); }
+  @media (max-width: 700px) { .footer-demo { grid-template-columns: 1fr; } }
+
+  /* --- Estados vazios (só documentação) --------------------------------------- */
+  .empty-pair { display: grid; grid-template-columns: 1fr 1fr; gap: var(--ccf-space-6); align-items: start; }
+  @media (max-width: 800px) { .empty-pair { grid-template-columns: 1fr; } }
+  .empty-note {
+    font-size: var(--ccf-text-xs);
+    color: var(--ccf-color-text-muted);
+    margin-bottom: var(--ccf-space-3);
+    display: block;
+  }
+  .empty-demo {
+    border: var(--ccf-empty-border);
+    border-radius: var(--ccf-radius-lg);
+    background: var(--ccf-empty-bg);
+    color: var(--ccf-empty-fg);
+    padding: var(--ccf-space-8);
+    text-align: center;
+    font-size: var(--ccf-text-sm);
+  }
+  .fill-label {
+    display: inline-block;
+    font-size: var(--ccf-text-xs);
+    font-weight: var(--ccf-font-weight-bold);
+    color: var(--ccf-color-success);
+    margin-bottom: var(--ccf-space-3);
+  }
+
+  /* --- Marca -------------------------------------------------------------------- */
+  .brand-showcase-tile {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ccf-space-4);
+  }
+  .brand-showcase-surface {
+    border-radius: var(--ccf-radius-xl);
+    padding: var(--ccf-space-8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 12rem;
+    border: 1px solid var(--ccf-color-border);
+  }
+  .brand-showcase-surface.is-light { background: var(--ccf-color-surface); }
+  .brand-showcase-surface.is-dark { background: var(--ccf-p-graphite-900); }
+  .brand-showcase-surface img { width: min(100%, 12rem); }
+  .brand-dont-list, .brand-do-list { display: flex; flex-direction: column; gap: var(--ccf-space-3); }
+  .brand-dont-list li, .brand-do-list li { display: flex; gap: var(--ccf-space-2); align-items: flex-start; font-size: var(--ccf-text-sm); }
+  .brand-dont-list .icon { color: var(--ccf-color-danger); margin-top: 0.15em; flex: none; }
+  .brand-do-list .icon { color: var(--ccf-color-success); margin-top: 0.15em; flex: none; }
+
+  /* --- Tokens --------------------------------------------------------------- */
+  .token-category { margin-bottom: var(--ccf-space-10); }
+  .token-category:last-child { margin-bottom: 0; }
+  .token-category h3 { font-size: var(--ccf-text-lg); margin-bottom: var(--ccf-space-4); font-family: var(--ccf-font-sans); }
+  .token-list { display: grid; grid-template-columns: 1fr 1fr; gap: var(--ccf-space-3); }
+  @media (max-width: 700px) { .token-list { grid-template-columns: 1fr; } }
+  .token {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--ccf-space-4);
+    padding: var(--ccf-space-3) var(--ccf-space-4);
+    border-radius: var(--ccf-radius-md);
+    background: var(--ccf-color-surface-alt);
+    border: 1px solid var(--ccf-color-border);
+  }
+  .token code { color: var(--ccf-color-primary-strong); font-size: var(--ccf-text-xs); }
+  .token span.desc { font-size: var(--ccf-text-xs); color: var(--ccf-color-text-muted); text-align: right; }
+
+  /* --- Rodapé da página em si ----------------------------------------------- */
+  .site-footer { padding: var(--ccf-space-8) 0 var(--ccf-space-16); }
+  .site-footer p { color: var(--ccf-color-text-muted); font-size: var(--ccf-text-sm); }
+</style>
+</head>
+
+<body>
+
+<!-- Sprite de ícones — inline, sem dependência externa -->
+<svg class="icon-sprite" aria-hidden="true">
+  <defs>
+    <symbol id="icon-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="8 12.5 10.8 15.5 16 9.5"/></symbol>
+    <symbol id="icon-alert" viewBox="0 0 24 24"><path d="M12 3.5 22 20H2z"/><line x1="12" y1="10" x2="12" y2="14.5"/><circle class="icon-fill" cx="12" cy="17.3" r="0.6"/></symbol>
+    <symbol id="icon-slash" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="6" y1="18" x2="18" y2="6"/></symbol>
+    <symbol id="icon-repeat" viewBox="0 0 24 24"><path d="M5 12a7 7 0 0 1 12-4.9M19 12a7 7 0 0 1-12 4.9"/><polyline points="16.5 3.5 17.1 7.1 13.5 7.7"/><polyline points="7.5 20.5 6.9 16.9 10.5 16.3"/></symbol>
+    <symbol id="icon-x" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></symbol>
+    <symbol id="icon-external" viewBox="0 0 24 24"><path d="M9 5H5a1.5 1.5 0 0 0-1.5 1.5v12A1.5 1.5 0 0 0 5 20h12a1.5 1.5 0 0 0 1.5-1.5V15"/><path d="M13 4h7v7"/><line x1="20" y1="4" x2="11" y2="13"/></symbol>
+    <symbol id="icon-chat" viewBox="0 0 24 24"><path d="M4 12a8 6.4 0 1 1 3.2 5.1L4 20l1.2-3.6A6.3 6.3 0 0 1 4 12z"/></symbol>
+    <symbol id="icon-share" viewBox="0 0 24 24"><circle cx="6" cy="12" r="2.3"/><circle cx="18" cy="5.5" r="2.3"/><circle cx="18" cy="18.5" r="2.3"/><line x1="8" y1="11" x2="16" y2="6.7"/><line x1="8" y1="13" x2="16" y2="17.3"/></symbol>
+    <symbol id="icon-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2"/><line x1="3.5" y1="9.5" x2="20.5" y2="9.5"/><line x1="8" y1="3" x2="8" y2="6.5"/><line x1="16" y1="3" x2="16" y2="6.5"/><line x1="12" y1="13" x2="12" y2="17"/><line x1="10" y1="15" x2="14" y2="15"/></symbol>
+    <symbol id="icon-pin" viewBox="0 0 24 24"><path d="M12 21s7-7.2 7-12a7 7 0 1 0-14 0c0 4.8 7 12 7 12z"/><circle cx="12" cy="9" r="2.4"/></symbol>
+    <symbol id="icon-instagram" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle class="icon-fill" cx="17" cy="7" r="0.9"/></symbol>
+    <symbol id="icon-facebook" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M14 8.5h-1.8c-.7 0-1.2.5-1.2 1.3V11h3l-.4 2.6h-2.6V20h-2.6v-6.4H8.5V11h1.9V9.4c0-2 1.2-3.4 3.2-3.4H14z" class="icon-fill"/></symbol>
+    <symbol id="icon-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><circle class="icon-fill" cx="12" cy="8" r="0.6"/></symbol>
+    <symbol id="icon-photo" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.4"/><path d="M4.5 16.5 9 12l3.5 3.5L16 12l3.5 3.5"/></symbol>
+    <symbol id="icon-menu-heart" viewBox="0 0 24 24"><path class="icon-fill" d="M12 20.5s-7.8-4.7-9.7-9.4C1 7.7 2.5 4.8 5.6 4.1c2-.5 3.9.4 5 2 .5-.9 1.7-2.3 4-2.1 3.2.3 5.2 3.2 4.1 6.8-1.4 4.7-6.7 9.7-6.7 9.7z"/></symbol>
+    <symbol id="icon-menu" viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></symbol>
+  </defs>
+</svg>
+
+<header class="topbar">
+  <div class="shell topbar-inner">
+    <a class="brand-mini" href="#top">
+      <span class="brand-icon"><img src="icon-ccf.png" alt="" /></span>
+      CCF · Design System da Agenda
+    </a>
+    <input type="checkbox" id="nav-toggle" class="visually-hidden" aria-label="Abrir ou fechar menu de navegação" />
+    <label for="nav-toggle" class="nav-toggle-btn">
+      <svg class="icon icon-menu" aria-hidden="true"><use href="#icon-menu"/></svg>
+      <svg class="icon icon-close" aria-hidden="true"><use href="#icon-x"/></svg>
+    </label>
+    <nav id="site-nav" aria-label="Navegação principal">
+      <a href="#marca">Marca</a>
+      <a href="#cores">Cores</a>
+      <a href="#tipografia">Tipografia</a>
+      <a href="#acessibilidade">Acessibilidade</a>
+      <a href="#componentes">Componentes</a>
+      <a href="#estados-vazios">Estados vazios</a>
+      <a href="#tokens">Tokens</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ============================== HERO ============================== -->
+  <section class="hero">
+    <div class="shell hero-grid">
+      <div>
+        <span class="eyebrow">Documento vivo · não é o site publicado</span>
+        <h1>O design da Agenda do Coração Família, em um só lugar.</h1>
+        <p class="hero-lead">
+          Esta página reúne cores, tipografia, componentes e regras de acessibilidade que vão
+          orientar a futura Agenda de eventos do CCF: a lista cronológica de oficinas, encontros
+          e atividades da organização, com uma página própria para cada evento — pensada primeiro
+          para celular.
+        </p>
+        <p class="hero-note">
+          Cada peça aqui usa os tokens definidos em <code>ccf_design_tokens.css</code>.
+          Contexto completo do projeto em <code>AGENTS.md</code>.
+        </p>
+      </div>
+      <div class="hero-card">
+        <img class="hero-logo" src="logo-ccf-lq.png" alt="Coração Família — logo com letreiro" />
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== MARCA ============================== -->
+  <section id="marca">
+    <div class="shell">
+      <div class="section-head">
+        <h2>Marca</h2>
+        <p>Três arquivos oficiais, cada um para um contexto. Nenhum deve ser redesenhado.</p>
+      </div>
+
+      <div class="grid grid-3" style="margin-bottom: var(--ccf-space-10);">
+        <div class="brand-showcase-tile">
+          <div class="brand-showcase-surface is-dark">
+            <img src="icon-ccf.png" alt="Ícone do mascote Coração Família, com o nome escrito dentro do coração, sem a segunda linha manuscrita" />
+          </div>
+          <div>
+            <div class="name" style="font-weight:var(--ccf-font-weight-bold); margin-bottom:var(--ccf-space-1);">icon-ccf.png</div>
+            <p class="hint" style="margin-bottom:var(--ccf-space-2);">
+              Mascote-coração com o nome "Coração Família" escrito dentro dele, fundo transparente
+              — não inclui a segunda linha manuscrita "CENTRO DE CONVIVÊNCIA FAMILIAR" que aparece
+              nas logos lq/hq. Use em avatar de app, superfícies pequenas ou <strong>fundos
+              escuros</strong> — como no rodapé institucional, mostrado no item <strong>l</strong>
+              da seção Componentes. O favicon é uma peça própria (ainda não gerada), não um recorte
+              deste arquivo.
+            </p>
+          </div>
+        </div>
+
+        <div class="brand-showcase-tile">
+          <div class="brand-showcase-surface is-light">
+            <img src="logo-ccf-lq.png" alt="Logo Coração Família em qualidade web, com letreiro" />
+          </div>
+          <div>
+            <div class="name" style="font-weight:var(--ccf-font-weight-bold); margin-bottom:var(--ccf-space-1);">logo-ccf-lq.png</div>
+            <p class="hint" style="margin-bottom:var(--ccf-space-2);">
+              Mascote + nome em letreiro vermelho manuscrito, resolução web. Uso padrão em
+              cabeçalho e materiais digitais — <strong>sempre sobre fundo claro</strong>: o
+              letreiro não tem contraste garantido em fundo escuro.
+            </p>
+          </div>
+        </div>
+
+        <div class="brand-showcase-tile">
+          <div class="brand-showcase-surface is-light">
+            <img src="logo-ccf-hq.png" alt="Logo Coração Família em alta resolução, mesmo conteúdo do lq" />
+          </div>
+          <div>
+            <div class="name" style="font-weight:var(--ccf-font-weight-bold); margin-bottom:var(--ccf-space-1);">logo-ccf-hq.png</div>
+            <p class="hint" style="margin-bottom:var(--ccf-space-2);">
+              Mesmo conteúdo do lq, em alta resolução (cerca de 1,1&nbsp;MB). Reservado para
+              impressão e exportações de alta qualidade. <strong>Não carregar em página web
+              comum</strong> — o peso do arquivo penaliza o carregamento.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-2">
+        <div class="card">
+          <h3 style="font-size: var(--ccf-text-lg); margin-bottom: var(--ccf-space-3);">Não fazer</h3>
+          <ul class="brand-dont-list" style="list-style: none; padding: 0; margin: 0;">
+            <li><svg class="icon" aria-hidden="true"><use href="#icon-x"/></svg> <span>Redesenhar, recolorir ou alterar as cores do mascote ou do letreiro.</span></li>
+            <li><svg class="icon" aria-hidden="true"><use href="#icon-x"/></svg> <span>Distorcer, espremer, alongar ou rotacionar qualquer um dos três arquivos.</span></li>
+            <li><svg class="icon" aria-hidden="true"><use href="#icon-x"/></svg> <span>Aplicar sombra, brilho (<em>glow</em>) ou modo de mescla diretamente sobre a imagem da marca — se precisar de destaque, aplique sombra no cartão/contêiner ao redor, nunca um <code>filter</code> na tag <code>&lt;img&gt;</code>.</span></li>
+            <li><svg class="icon" aria-hidden="true"><use href="#icon-x"/></svg> <span>Colar <code>logo-ccf-lq.png</code> sobre fundo escuro ou colorido sem testar o contraste do letreiro manuscrito.</span></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="font-size: var(--ccf-text-lg); margin-bottom: var(--ccf-space-3);">Área de respiro e tamanho mínimo</h3>
+          <ul class="brand-do-list" style="list-style: none; padding: 0; margin: 0;">
+            <li><svg class="icon" aria-hidden="true"><use href="#icon-check"/></svg> <span>Reserve uma margem livre ao redor da marca de aproximadamente 25% da largura da peça, em todos os lados.</span></li>
+            <li><svg class="icon" aria-hidden="true"><use href="#icon-check"/></svg> <span>Largura mínima do ícone isolado: 32px.</span></li>
+            <li><svg class="icon" aria-hidden="true"><use href="#icon-check"/></svg> <span>Largura mínima da logo com letreiro: 160px — abaixo disso o texto manuscrito fica ilegível.</span></li>
+            <li><svg class="icon" aria-hidden="true"><use href="#icon-check"/></svg> <span>Sempre carregar os PNGs por caminho relativo (<code>src="icon-ccf.png"</code>), nunca embutidos em base64.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== CORES ============================== -->
+  <section id="cores">
+    <div class="shell">
+      <div class="section-head">
+        <h2>Paleta cromática</h2>
+        <p>
+          Vermelho e azul vivos vêm do arquivo oficial da marca — todo o resto foi criado
+          para a interface e não existe no logo.
+        </p>
+      </div>
+
+      <div class="grid grid-4" style="margin-bottom: var(--ccf-space-10);">
+        <div class="swatch">
+          <div class="swatch-fill" style="background: var(--ccf-p-red-logo);"><span class="swatch-tag is-marca">Marca</span></div>
+          <div class="swatch-body">
+            <div class="name">Vermelho do logo</div>
+            <code>--ccf-p-red-logo</code>
+            <p class="desc">Vermelho vivo do coração-mascote, amostrado pixel a pixel do PNG oficial. Reservado a contexto de marca.</p>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-fill" style="background: var(--ccf-p-blue-logo);"><span class="swatch-tag is-marca">Marca</span></div>
+          <div class="swatch-body">
+            <div class="name">Azul do logo</div>
+            <code>--ccf-p-blue-logo</code>
+            <p class="desc">Azul vivo dos tênis do mascote — descoberta desta revisão, nunca documentado antes. Também reservado a contexto de marca.</p>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-fill" style="background: var(--ccf-p-black);"><span class="swatch-tag is-marca">Marca</span></div>
+          <div class="swatch-body">
+            <div class="name">Preto</div>
+            <code>--ccf-p-black</code>
+            <p class="desc">Contorno do mascote. Não usar como cor de texto corrido da interface.</p>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-fill" style="background: var(--ccf-p-white); border-bottom: 1px solid var(--ccf-color-border);"><span class="swatch-tag is-marca">Marca</span></div>
+          <div class="swatch-body">
+            <div class="name">Branco</div>
+            <code>--ccf-p-white</code>
+            <p class="desc">Fundo do mascote na marca; também usado como neutro de interface (superfícies, texto sobre cor).</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-4" style="margin-bottom: var(--ccf-space-6);">
+        <div class="swatch">
+          <div class="swatch-fill" style="background: var(--ccf-p-red-500); color: var(--ccf-p-white);"><span class="swatch-tag is-interface">Interface</span></div>
+          <div class="swatch-body"><div class="name">Vermelho 500</div><code>--ccf-p-red-500</code><p class="desc">Botões e áreas grandes — o vermelho puro da marca cansaria a vista em superfícies extensas.</p></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-fill" style="background: var(--ccf-p-red-700); color: var(--ccf-p-white);"><span class="swatch-tag is-interface">Interface</span></div>
+          <div class="swatch-body"><div class="name">Vermelho 700</div><code>--ccf-p-red-700</code><p class="desc">Texto sobre fundo claro, estado ativo/pressionado. Contraste AAA com branco.</p></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-fill" style="background: var(--ccf-p-blue-700); color: var(--ccf-p-white);"><span class="swatch-tag is-interface">Interface</span></div>
+          <div class="swatch-body"><div class="name">Azul institucional 700</div><code>--ccf-p-blue-700</code><p class="desc">Adaptação dessaturada do azul da marca — para uso extenso em texto e UI, onde o azul vivo falharia contraste.</p></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-fill" style="background: var(--ccf-p-coral-400);"><span class="swatch-tag is-interface">Interface</span></div>
+          <div class="swatch-body"><div class="name">Coral</div><code>--ccf-p-coral-400</code><p class="desc">Acento decorativo/categórico. Não existe no logo — extensão inventada para a UI. Não usar como cor de status.</p></div>
+        </div>
+      </div>
+
+      <div class="grid grid-4" style="margin-bottom: var(--ccf-space-12);">
+        <div class="swatch">
+          <div class="swatch-fill" style="background: var(--ccf-p-yellow-400); color: var(--ccf-p-amber-ink);"><span class="swatch-tag is-interface">Interface</span></div>
+          <div class="swatch-body"><div class="name">Amarelo</div><code>--ccf-p-yellow-400</code><p class="desc">Só com texto escuro por cima (<code>--ccf-p-amber-ink</code>). Nunca texto branco.</p></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-fill" style="background: var(--ccf-p-cream-50);"><span class="swatch-tag is-interface">Interface</span></div>
+          <div class="swatch-body"><div class="name">Creme (fundo)</div><code>--ccf-p-cream-50</code><p class="desc">Fundo acolhedor da interface. Não está no logo.</p></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-fill" style="background: var(--ccf-p-graphite-900); color: var(--ccf-p-white);"><span class="swatch-tag is-interface">Interface</span></div>
+          <div class="swatch-body"><div class="name">Grafite (texto)</div><code>--ccf-p-graphite-900</code><p class="desc">Texto principal da interface. Extensão neutra, não vem do logo.</p></div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-fill" style="background: var(--ccf-p-gray-600); color: var(--ccf-p-white);"><span class="swatch-tag is-interface">Interface</span></div>
+          <div class="swatch-body"><div class="name">Cinza (texto secundário)</div><code>--ccf-p-gray-600</code><p class="desc">Texto auxiliar, metadados. Extensão neutra de interface.</p></div>
+        </div>
+      </div>
+
+      <h3 style="font-size: var(--ccf-text-lg); margin-bottom: var(--ccf-space-2);">Correção de contraste: verde-500 × verde-700</h3>
+      <p class="hint" style="max-width: var(--ccf-reading-width); margin-bottom: var(--ccf-space-5); color: var(--ccf-color-text-muted);">
+        Nenhum dos dois verdes existe no logo — são extensões de interface para status. O rascunho
+        anterior usava <code>--ccf-p-green-500</code> com texto branco; essa combinação falha o
+        contraste mínimo da WCAG. A correção pedida pelo projeto: texto branco passa a usar sempre
+        <code>--ccf-p-green-700</code>. O 500 continua no sistema, mas só como fundo claro com
+        texto escuro por cima.
+      </p>
+      <div class="contrast-pair">
+        <div class="contrast-tile" style="background: var(--ccf-p-green-500); color: var(--ccf-p-white);">
+          <span class="tag-example" style="margin-bottom:0; background: transparent; color: var(--ccf-p-white); padding-left:0;">Antes · reprovado</span>
+          <div>Texto branco sobre verde-500</div>
+          <div class="ratio">4,45 : 1</div>
+          <div class="verdict">Falha o AA (mínimo 4,5:1) — não usar mais texto branco aqui</div>
+        </div>
+        <div class="contrast-tile" style="background: var(--ccf-p-green-700); color: var(--ccf-p-white);">
+          <span class="tag-example" style="margin-bottom:0; background: transparent; color: var(--ccf-p-white); padding-left:0;">Depois · em uso</span>
+          <div>Texto branco sobre verde-700</div>
+          <div class="ratio">6,08 : 1</div>
+          <div class="verdict">Passa AA — token <code>--ccf-color-success</code> aponta para este tom</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== TIPOGRAFIA ============================== -->
+  <section id="tipografia">
+    <div class="shell">
+      <div class="section-head">
+        <h2>Tipografia</h2>
+        <p>Nunito Sans para interface e corpo de texto. Fraunces para títulos emocionais e de destaque.</p>
+      </div>
+
+      <div class="grid grid-2" style="margin-bottom: var(--ccf-space-10);">
+        <div class="card">
+          <span class="eyebrow" style="margin-bottom: var(--ccf-space-4);">UI · corpo</span>
+          <div style="font-family: var(--ccf-font-sans); font-size: var(--ccf-text-2xl); font-weight: var(--ccf-font-weight-bold);">Nunito Sans</div>
+          <p class="hint" style="margin-top: var(--ccf-space-2);">Navegação, botões, texto corrido, formulários, metadados.</p>
+        </div>
+        <div class="card">
+          <span class="eyebrow" style="margin-bottom: var(--ccf-space-4);">Display · emocional</span>
+          <div style="font-family: var(--ccf-font-display); font-size: var(--ccf-text-2xl); font-weight: var(--ccf-font-weight-bold);">Fraunces</div>
+          <p class="hint" style="margin-top: var(--ccf-space-2);">Títulos de página, títulos de evento, momentos editoriais/calorosos.</p>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom: var(--ccf-space-10);">
+        <div class="type-row"><div class="sample" style="font-family: var(--ccf-font-display); font-size: var(--ccf-text-display); line-height: var(--ccf-line-height-tight);">Aa</div><div class="meta"><code>--ccf-text-display</code>display</div></div>
+        <div class="type-row"><div class="sample" style="font-family: var(--ccf-font-display); font-size: var(--ccf-text-h1); line-height: var(--ccf-line-height-tight);">Aa</div><div class="meta"><code>--ccf-text-h1</code>h1</div></div>
+        <div class="type-row"><div class="sample" style="font-family: var(--ccf-font-display); font-size: var(--ccf-text-h2); line-height: var(--ccf-line-height-tight);">Aa</div><div class="meta"><code>--ccf-text-h2</code>h2</div></div>
+        <div class="type-row"><div class="sample" style="font-size: var(--ccf-text-3xl); font-weight: var(--ccf-font-weight-bold);">Aa</div><div class="meta"><code>--ccf-text-3xl</code>32px</div></div>
+        <div class="type-row"><div class="sample" style="font-size: var(--ccf-text-2xl); font-weight: var(--ccf-font-weight-bold);">Aa</div><div class="meta"><code>--ccf-text-2xl</code>24px</div></div>
+        <div class="type-row"><div class="sample" style="font-size: var(--ccf-text-xl); font-weight: var(--ccf-font-weight-semibold);">Aa</div><div class="meta"><code>--ccf-text-xl</code>20px</div></div>
+        <div class="type-row"><div class="sample" style="font-size: var(--ccf-text-lg);">Aa texto de destaque, lead de parágrafo</div><div class="meta"><code>--ccf-text-lg</code>18px</div></div>
+        <div class="type-row"><div class="sample" style="font-size: var(--ccf-text-base);">Aa corpo de texto padrão</div><div class="meta"><code>--ccf-text-base</code>16px</div></div>
+        <div class="type-row"><div class="sample" style="font-size: var(--ccf-text-sm); color: var(--ccf-color-text-muted);">Aa texto auxiliar, navegação</div><div class="meta"><code>--ccf-text-sm</code>14px</div></div>
+        <div class="type-row"><div class="sample" style="font-size: var(--ccf-text-xs); color: var(--ccf-color-text-muted); text-transform: uppercase; letter-spacing: var(--ccf-letter-spacing-wide);">Aa legenda, metadado</div><div class="meta"><code>--ccf-text-xs</code>12px</div></div>
+      </div>
+
+      <div class="card">
+        <span class="eyebrow" style="margin-bottom: var(--ccf-space-4);">Pesos</span>
+        <div class="weight-row">
+          <span class="weight-sample" style="font-weight: var(--ccf-font-weight-regular);">Regular 400</span>
+          <span class="weight-sample" style="font-weight: var(--ccf-font-weight-semibold);">Semibold 600</span>
+          <span class="weight-sample" style="font-weight: var(--ccf-font-weight-bold);">Bold 700</span>
+          <span class="weight-sample" style="font-weight: var(--ccf-font-weight-black);">Black 800</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== ESPAÇAMENTO / RAIO / SOMBRA ====================== -->
+  <section id="espacamento-raio-sombra">
+    <div class="shell">
+      <div class="section-head">
+        <h2>Espaçamento, raio e sombra</h2>
+        <p>As escalas que dão ritmo e profundidade a cada componente da Agenda.</p>
+      </div>
+
+      <div class="grid grid-2" style="align-items: start;">
+        <div class="card">
+          <h3 style="font-size: var(--ccf-text-lg); margin-bottom: var(--ccf-space-4);">Espaçamento</h3>
+          <div class="scale-row"><code>--ccf-space-1</code><div class="scale-bar" style="width: var(--ccf-space-1);"></div></div>
+          <div class="scale-row"><code>--ccf-space-2</code><div class="scale-bar" style="width: var(--ccf-space-2);"></div></div>
+          <div class="scale-row"><code>--ccf-space-3</code><div class="scale-bar" style="width: var(--ccf-space-3);"></div></div>
+          <div class="scale-row"><code>--ccf-space-4</code><div class="scale-bar" style="width: var(--ccf-space-4);"></div></div>
+          <div class="scale-row"><code>--ccf-space-6</code><div class="scale-bar" style="width: var(--ccf-space-6);"></div></div>
+          <div class="scale-row"><code>--ccf-space-8</code><div class="scale-bar" style="width: var(--ccf-space-8);"></div></div>
+          <div class="scale-row"><code>--ccf-space-12</code><div class="scale-bar" style="width: var(--ccf-space-12);"></div></div>
+          <div class="scale-row"><code>--ccf-space-16</code><div class="scale-bar" style="width: var(--ccf-space-16);"></div></div>
+          <div class="scale-row"><code>--ccf-space-24</code><div class="scale-bar" style="width: var(--ccf-space-24);"></div></div>
+        </div>
+
+        <div class="subgrid-gap">
+          <div class="card">
+            <h3 style="font-size: var(--ccf-text-lg); margin-bottom: var(--ccf-space-4);">Raio</h3>
+            <div class="radius-demo">
+              <div class="radius-tile" style="border-radius: var(--ccf-radius-sm);"><span>sm</span></div>
+              <div class="radius-tile" style="border-radius: var(--ccf-radius-md);"><span>md</span></div>
+              <div class="radius-tile" style="border-radius: var(--ccf-radius-lg);"><span>lg</span></div>
+              <div class="radius-tile" style="border-radius: var(--ccf-radius-xl);"><span>xl</span></div>
+              <div class="radius-tile" style="border-radius: var(--ccf-radius-2xl);"><span>2xl</span></div>
+              <div class="radius-tile" style="border-radius: var(--ccf-radius-full);"><span>full</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <h3 style="font-size: var(--ccf-text-lg); margin-bottom: var(--ccf-space-4);">Sombra</h3>
+            <div class="shadow-demo">
+              <div class="shadow-tile" style="box-shadow: var(--ccf-shadow-sm);">sm</div>
+              <div class="shadow-tile" style="box-shadow: var(--ccf-shadow-md);">md</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== ACESSIBILIDADE ============================== -->
+  <section id="acessibilidade">
+    <div class="shell">
+      <div class="section-head">
+        <h2>Acessibilidade</h2>
+        <p>Contraste real, calculado a partir dos tokens; foco visível; e nada dito só por cor.</p>
+      </div>
+
+      <div class="table-wrap" style="margin-bottom: var(--ccf-space-10);">
+        <table>
+          <thead>
+            <tr><th>Combinação</th><th>Contraste</th><th>Resultado</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Branco sobre <code>--ccf-p-red-500</code> (vermelho-500)</td><td>4,62 : 1</td><td>Passa AA para texto de qualquer tamanho — acima do mínimo, mas mais perto do limite que os outros tons</td></tr>
+            <tr><td>Branco sobre <code>--ccf-p-red-700</code> (vermelho-700)</td><td>7,20 : 1</td><td>AAA</td></tr>
+            <tr><td>Branco sobre <code>--ccf-p-blue-700</code> (azul institucional)</td><td>7,26 : 1</td><td>AAA</td></tr>
+            <tr><td>Branco sobre <code>--ccf-p-green-700</code> (verde corrigido)</td><td>6,08 : 1</td><td>AA</td></tr>
+            <tr><td>Branco sobre <code>--ccf-p-green-500</code> (verde original — reprovado)</td><td>4,45 : 1</td><td>Falha o AA (abaixo do mínimo 4,5:1) — por isso texto branco passou a usar sempre o verde-700</td></tr>
+            <tr><td><code>--ccf-p-amber-ink</code> sobre <code>--ccf-p-yellow-50</code></td><td>6,12 : 1</td><td>AA</td></tr>
+            <tr><td><code>--ccf-p-gray-600</code> sobre creme (<code>--ccf-color-background</code>)</td><td>4,75 : 1</td><td>AA</td></tr>
+            <tr><td><code>--ccf-p-graphite-900</code> sobre <code>--ccf-p-cream-50</code></td><td>12,07 : 1</td><td>AAA</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card demo focus-demo" style="margin-bottom: var(--ccf-space-10);">
+        <span class="eyebrow">Ao vivo</span>
+        <p>Pressione <kbd>Tab</kbd> a partir do topo da página (ou clique aqui e use <kbd>Tab</kbd>) até chegar neste botão para ver o anel de foco em ação.</p>
+        <button type="button" class="btn btn-primary">Botão de exemplo com foco visível</button>
+        <p class="hint" style="font-size: var(--ccf-text-xs);">Usa <code>:focus-visible</code> com <code>var(--ccf-focus-ring)</code> — nunca <code>:focus</code> sozinho, nunca <code>outline:none</code> sem substituto.</p>
+      </div>
+
+      <div class="a11y-principles">
+        <div class="a11y-principle">
+          <svg class="icon" aria-hidden="true"><use href="#icon-repeat"/></svg>
+          <div>
+            <strong>Movimento reduzido</strong>
+            <p class="hint">Este documento inteiro respeita <code>prefers-reduced-motion</code>: transições, animações e a rolagem suave são desligadas quando o visitante pede menos movimento.</p>
+            <pre style="margin-top: var(--ccf-space-3);">@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}</pre>
+          </div>
+        </div>
+        <div class="a11y-principle">
+          <svg class="icon" aria-hidden="true"><use href="#icon-menu-heart"/></svg>
+          <div>
+            <strong>Navegação mobile</strong>
+            <p class="hint">O menu do cabeçalho colapsa abaixo de 768px e vira um botão único, já demonstrado no topo desta página. Todo alvo de toque no menu tem no mínimo 44px — aqui, 48px (<code>--ccf-button-min-height</code>).</p>
+          </div>
+        </div>
+        <div class="a11y-principle">
+          <svg class="icon" aria-hidden="true"><use href="#icon-alert"/></svg>
+          <div>
+            <strong>Nunca só cor</strong>
+            <p class="hint">Todo status de evento leva ícone e texto junto com a cor — quem não distingue cores ainda entende a etiqueta. Ver as 5 variantes de status na seção Componentes.</p>
+          </div>
+        </div>
+        <div class="a11y-principle">
+          <svg class="icon" aria-hidden="true"><use href="#icon-check"/></svg>
+          <div>
+            <strong>Contraste como regra, não exceção</strong>
+            <p class="hint">Os números desta tabela vieram do cálculo real de cada combinação usada no sistema — nenhum foi estimado.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== COMPONENTES ============================== -->
+  <section id="componentes">
+    <div class="shell">
+      <div class="section-head">
+        <h2>Componentes</h2>
+        <p>As peças reais da Agenda, cada uma com um exemplo renderizado.</p>
+      </div>
+
+      <div class="tag-example">Todo conteúdo de evento abaixo é ilustrativo — nomes, datas, valores e contatos não são reais e não devem ser usados para publicar a agenda do CCF</div>
+
+      <!-- a. Cabeçalho / navegação -->
+      <div class="component-block">
+        <h3>a. Cabeçalho e navegação</h3>
+        <p class="hint">O padrão de barra fixa (<em>sticky</em>), marca à esquerda, links à direita e menu
+          de checkbox sem JavaScript abaixo de 768px já está demonstrado no topo desta própria página —
+          mas aquele é o cabeçalho <strong>deste documento de design system</strong>, sem links sociais
+          nem contato. O mockup abaixo mostra como o cabeçalho da <strong>Agenda pública</strong> (o site
+          real) deve se diferenciar dele.</p>
+        <div class="demo">
+          <div class="page-mock" style="padding: var(--ccf-space-4) var(--ccf-space-6); gap: var(--ccf-space-3);">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap: var(--ccf-space-4); flex-wrap:wrap;">
+              <img src="logo-ccf-lq.png" alt="Coração Família" style="width: 8rem;" />
+              <nav aria-label="Navegação da Agenda pública (exemplo)" style="display:flex; gap: var(--ccf-space-1); flex-wrap:wrap;">
+                <a href="#" style="text-decoration:none; font-size:var(--ccf-text-sm); font-weight:var(--ccf-font-weight-bold); color:var(--ccf-nav-link-fg); padding: var(--ccf-space-2) var(--ccf-space-3); border-radius: var(--ccf-radius-full);">Início</a>
+                <a href="#" style="text-decoration:none; font-size:var(--ccf-text-sm); font-weight:var(--ccf-font-weight-bold); color:var(--ccf-nav-link-fg); padding: var(--ccf-space-2) var(--ccf-space-3); border-radius: var(--ccf-radius-full);">Agenda</a>
+                <a href="#" style="text-decoration:none; font-size:var(--ccf-text-sm); font-weight:var(--ccf-font-weight-bold); color:var(--ccf-nav-link-fg); padding: var(--ccf-space-2) var(--ccf-space-3); border-radius: var(--ccf-radius-full);">Sobre</a>
+                <a href="#" style="text-decoration:none; font-size:var(--ccf-text-sm); font-weight:var(--ccf-font-weight-bold); color:var(--ccf-nav-link-fg); padding: var(--ccf-space-2) var(--ccf-space-3); border-radius: var(--ccf-radius-full);">Contato</a>
+              </nav>
+              <div style="display:flex; gap: var(--ccf-space-2);">
+                <a href="https://www.instagram.com/coracaofamilia/" target="_blank" rel="noopener" aria-label="Instagram" style="width:2.5rem; height:2.5rem; border-radius:var(--ccf-radius-full); border:1px solid var(--ccf-color-border); display:flex; align-items:center; justify-content:center; color:var(--ccf-color-text); text-decoration:none;"><svg class="icon" aria-hidden="true"><use href="#icon-instagram"/></svg></a>
+                <a href="https://www.facebook.com/coracaofamilia/" target="_blank" rel="noopener" aria-label="Facebook" style="width:2.5rem; height:2.5rem; border-radius:var(--ccf-radius-full); border:1px solid var(--ccf-color-border); display:flex; align-items:center; justify-content:center; color:var(--ccf-color-text); text-decoration:none;"><svg class="icon" aria-hidden="true"><use href="#icon-facebook"/></svg></a>
+              </div>
+            </div>
+          </div>
+          <p class="hint" style="font-size: var(--ccf-text-xs); margin-top: var(--ccf-space-3); margin-bottom:0;">
+            Mockup ilustrativo, não interativo — links e rótulos são exemplos.
+          </p>
+        </div>
+      </div>
+
+      <!-- b. Lista cronológica -->
+      <div class="component-block">
+        <h3>b. Lista cronológica</h3>
+        <p class="hint">A tela principal da Agenda: eventos em ordem de data, cada item leva para a página do evento. Sem grade de calendário — prioridade para o uso em celular.</p>
+        <div class="demo">
+          <div class="timeline">
+            <a class="timeline-item" href="#horarios">
+              <div class="timeline-card">
+                <div class="date-badge"><span class="day">03</span><span class="month">out</span></div>
+                <div style="flex:1;">
+                  <h4>Oficina de teatro (evento ilustrativo)</h4>
+                  <div class="meta-row"><svg class="icon" aria-hidden="true"><use href="#icon-pin"/></svg> Sede do CCF · 14h às 16h</div>
+                </div>
+                <span class="status-badge status-open"><svg class="icon" aria-hidden="true"><use href="#icon-check"/></svg> Vagas abertas</span>
+              </div>
+            </a>
+            <a class="timeline-item" href="#detalhe-evento">
+              <div class="timeline-card">
+                <div class="date-badge"><span class="day">10</span><span class="month">out</span></div>
+                <div style="flex:1;">
+                  <h4>Feira de trocas comunitária (evento ilustrativo)</h4>
+                  <div class="meta-row"><svg class="icon" aria-hidden="true"><use href="#icon-pin"/></svg> Sede do CCF · 10 e 11 de outubro</div>
+                </div>
+                <span class="status-badge status-limited"><svg class="icon" aria-hidden="true"><use href="#icon-alert"/></svg> Vagas limitadas</span>
+              </div>
+            </a>
+            <a class="timeline-item" href="#horarios">
+              <div class="timeline-card">
+                <div class="date-badge"><span class="day">18</span><span class="month">out</span></div>
+                <div style="flex:1;">
+                  <h4>Roda de conversa sobre parentalidade (evento ilustrativo)</h4>
+                  <div class="meta-row"><svg class="icon" aria-hidden="true"><use href="#icon-pin"/></svg> Sede do CCF · dia todo</div>
+                </div>
+                <span class="status-badge status-changed"><svg class="icon" aria-hidden="true"><use href="#icon-repeat"/></svg> Data alterada</span>
+              </div>
+            </a>
+            <a class="timeline-item" href="#local">
+              <div class="timeline-card">
+                <div class="date-badge"><span class="day">05</span><span class="month">nov</span></div>
+                <div style="flex:1;">
+                  <h4>Encontro de mães e bebês (evento ilustrativo)</h4>
+                  <div class="meta-row"><svg class="icon" aria-hidden="true"><use href="#icon-pin"/></svg> Centro Comunitário Vila Guacuri (endereço ilustrativo) · 9h às 11h</div>
+                </div>
+                <span class="status-badge status-full"><svg class="icon" aria-hidden="true"><use href="#icon-slash"/></svg> Lotado</span>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- c. Card de evento -->
+      <div class="component-block">
+        <h3>c. Card de evento</h3>
+        <p class="hint">A versão em cartão do mesmo item da lista, com imagem em proporção 16/10, etiqueta de data, título, local/hora resumidos e um badge de status.</p>
+        <div class="demo">
+          <div style="max-width: 22rem;">
+            <a class="event-card" href="#detalhe-evento">
+              <div class="event-card-image photo-placeholder"><svg class="icon" aria-hidden="true"><use href="#icon-photo"/></svg> Foto do evento (placeholder)</div>
+              <div class="event-card-body">
+                <div style="display:flex; gap: var(--ccf-space-4); align-items:flex-start;">
+                  <div class="date-badge"><span class="day">03</span><span class="month">out</span></div>
+                  <div style="flex:1;">
+                    <h4>Oficina de teatro (evento ilustrativo)</h4>
+                    <div class="meta-row"><svg class="icon" aria-hidden="true"><use href="#icon-pin"/></svg> Sede do CCF · 14h às 16h</div>
+                  </div>
+                </div>
+                <span class="status-badge status-open" style="align-self:flex-start;"><svg class="icon" aria-hidden="true"><use href="#icon-check"/></svg> Vagas abertas</span>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- d. Etiquetas de data/status -->
+      <div class="component-block">
+        <h3>d. Etiquetas de data e status</h3>
+        <p class="hint">A etiqueta de data isolada, e as 5 variantes de status possíveis para um evento — cada uma com ícone e texto, nunca só cor.</p>
+        <div class="demo">
+          <div style="margin-bottom: var(--ccf-space-6);">
+            <div class="date-badge"><span class="day">25</span><span class="month">dez</span></div>
+          </div>
+          <div class="status-showcase">
+            <span class="status-badge status-open"><svg class="icon" aria-hidden="true"><use href="#icon-check"/></svg> Vagas abertas</span>
+            <span class="status-badge status-limited"><svg class="icon" aria-hidden="true"><use href="#icon-alert"/></svg> Vagas limitadas</span>
+            <span class="status-badge status-full"><svg class="icon" aria-hidden="true"><use href="#icon-slash"/></svg> Lotado</span>
+            <span class="status-badge status-changed"><svg class="icon" aria-hidden="true"><use href="#icon-repeat"/></svg> Data alterada</span>
+            <span class="status-badge status-cancelled"><svg class="icon" aria-hidden="true"><use href="#icon-x"/></svg> Cancelado</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- e. Botão de inscrição/contato -->
+      <div class="component-block">
+        <h3>e. Botão de inscrição e contato</h3>
+        <p class="hint">Duas variantes reais de chamada para ação, mais o caso em que não existe inscrição — nesse caso o botão simplesmente não aparece na página real; o texto abaixo mostra o que entra no lugar dele.</p>
+        <div class="demo">
+          <div class="grid grid-3">
+            <div class="card">
+              <div class="meta-row" style="margin-bottom: var(--ccf-space-3); color: var(--ccf-color-text-muted); font-size: var(--ccf-text-xs); text-transform:uppercase; letter-spacing: var(--ccf-letter-spacing-wide); font-weight: var(--ccf-font-weight-bold);">Inscrição por link externo</div>
+              <a class="btn btn-primary" href="#"><svg class="icon" aria-hidden="true"><use href="#icon-external"/></svg> Inscreva-se</a>
+            </div>
+            <div class="card">
+              <div class="meta-row" style="margin-bottom: var(--ccf-space-3); color: var(--ccf-color-text-muted); font-size: var(--ccf-text-xs); text-transform:uppercase; letter-spacing: var(--ccf-letter-spacing-wide); font-weight: var(--ccf-font-weight-bold);">Contato via WhatsApp</div>
+              <a class="btn btn-secondary" href="#"><svg class="icon" aria-hidden="true"><use href="#icon-chat"/></svg> Falar pelo WhatsApp</a>
+            </div>
+            <div class="card">
+              <div class="meta-row" style="margin-bottom: var(--ccf-space-3); color: var(--ccf-color-text-muted); font-size: var(--ccf-text-xs); text-transform:uppercase; letter-spacing: var(--ccf-letter-spacing-wide); font-weight: var(--ccf-font-weight-bold);">Sem inscrição necessária</div>
+              <div class="meta-row" style="color: var(--ccf-color-success); font-weight: var(--ccf-font-weight-bold);"><svg class="icon" aria-hidden="true"><use href="#icon-check"/></svg> Gratuito, sem inscrição</div>
+              <p class="hint" style="margin-top: var(--ccf-space-2); font-size: var(--ccf-text-xs);">Nenhum botão aparece aqui na página real — este texto o substitui.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- f. Detalhe do evento -->
+      <div class="component-block" id="detalhe-evento">
+        <h3>f. Detalhe do evento (página completa, preenchida)</h3>
+        <p class="hint">Mockup de uma página de evento com todos os campos preenchidos: banner, título, badges, descrição, programação de um dia, convidados, local e ações.</p>
+        <div class="page-mock">
+          <div class="banner">
+            <div class="banner-noimg photo-placeholder"><svg class="icon" aria-hidden="true"><use href="#icon-photo"/></svg> Banner do evento (placeholder)</div>
+            <div class="banner-caption">
+              <span class="status-badge status-limited"><svg class="icon" aria-hidden="true"><use href="#icon-alert"/></svg> Vagas limitadas</span>
+            </div>
+          </div>
+
+          <div>
+            <div class="header-with-date" style="margin-bottom: var(--ccf-space-4);">
+              <div class="date-badge"><span class="day">10</span><span class="month">out</span></div>
+              <div>
+                <h4 class="mock-title">Feira de trocas comunitária (evento ilustrativo)</h4>
+                <div class="meta-row" style="margin-top: var(--ccf-space-2);"><svg class="icon" aria-hidden="true"><use href="#icon-pin"/></svg> Sede do CCF · 10 e 11 de outubro</div>
+              </div>
+            </div>
+            <p class="desc">
+              Encontro ilustrativo para reunir famílias em torno da troca de roupas, brinquedos e
+              utensílios, com oficinas paralelas para crianças. Todos os nomes, horários e números
+              deste exemplo são fictícios — servem só para mostrar como a página de um evento real
+              se comportaria com todos os campos preenchidos.
+            </p>
+          </div>
+
+          <div>
+            <span class="block-title">Programação</span>
+            <div class="day-tabs" role="tablist" aria-label="Dias do evento">
+              <button type="button" class="day-tab" role="tab" aria-selected="true">Dia 1 — 10/10</button>
+              <button type="button" class="day-tab" role="tab" aria-selected="false">Dia 2 — 11/10</button>
+            </div>
+            <div class="schedule">
+              <div class="schedule-item"><div class="schedule-time">09h00</div><div class="schedule-content"><h4>Abertura e acolhida</h4><p>Recepção das famílias na entrada da sede.</p></div></div>
+              <div class="schedule-item"><div class="schedule-time">10h00</div><div class="schedule-content"><h4>Troca de roupas e brinquedos</h4><p>Mesas organizadas por faixa etária.</p></div></div>
+              <div class="schedule-item"><div class="schedule-time">11h30</div><div class="schedule-content"><h4>Oficina para crianças</h4><p>Atividade paralela, com convidados ilustrativos abaixo.</p></div></div>
+            </div>
+          </div>
+
+          <div>
+            <span class="block-title">Convidados</span>
+            <div class="guest-grid">
+              <div class="guest-card">
+                <div class="guest-avatar">AF</div>
+                <div><div class="guest-name">Ana Ferreira (ilustrativo)</div><div class="guest-role">Educadora social</div></div>
+                <p class="guest-bio">Conduz a oficina de crianças com dinâmicas de troca e cooperação.</p>
+              </div>
+              <div class="guest-card">
+                <div class="guest-avatar">MR</div>
+                <div><div class="guest-name">Marcos Ribeiro (ilustrativo)</div><div class="guest-role">Voluntário de logística</div></div>
+                <p class="guest-bio">Organiza a chegada e a triagem dos itens doados para a troca.</p>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <span class="block-title">Local</span>
+            <div class="location-block">
+              <svg class="icon" aria-hidden="true"><use href="#icon-pin"/></svg>
+              <div>
+                <div>Rua Calasans, 200, Vila Santa Catarina, São Paulo, SP, CEP 04369-100</div>
+                <span class="confirm-note"><svg class="icon" aria-hidden="true"><use href="#icon-info"/></svg> Confirmar com a organização antes de publicar</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="cta-row">
+            <a class="btn btn-primary" href="#"><svg class="icon" aria-hidden="true"><use href="#icon-external"/></svg> Inscreva-se</a>
+            <a class="btn btn-outline" href="#"><svg class="icon" aria-hidden="true"><use href="#icon-share"/></svg> Compartilhar</a>
+            <a class="btn btn-outline" href="#"><svg class="icon" aria-hidden="true"><use href="#icon-calendar"/></svg> Adicionar à agenda</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- g. Banner opcional -->
+      <div class="component-block">
+        <h3>g. Banner opcional</h3>
+        <p class="hint">O mesmo tipo de card, com e sem banner — o layout se adapta quando o campo não é preenchido.</p>
+        <div class="demo">
+          <div class="grid grid-2">
+            <a class="event-card" href="#">
+              <div class="event-card-image photo-placeholder"><svg class="icon" aria-hidden="true"><use href="#icon-photo"/></svg> Foto do evento (placeholder)</div>
+              <div class="event-card-body">
+                <div style="display:flex; gap: var(--ccf-space-4); align-items:flex-start;">
+                  <div class="date-badge"><span class="day">10</span><span class="month">out</span></div>
+                  <div><h4>Com banner</h4><div class="meta-row"><svg class="icon" aria-hidden="true"><use href="#icon-pin"/></svg> Sede do CCF</div></div>
+                </div>
+              </div>
+            </a>
+            <a class="event-card" href="#">
+              <div class="event-card-body">
+                <div style="display:flex; gap: var(--ccf-space-4); align-items:flex-start;">
+                  <div class="date-badge"><span class="day">10</span><span class="month">out</span></div>
+                  <div><h4>Sem banner</h4><div class="meta-row"><svg class="icon" aria-hidden="true"><use href="#icon-pin"/></svg> Sede do CCF</div></div>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- h. Horários -->
+      <div class="component-block" id="horarios">
+        <h3>h. Horários — um dia, dia sem hora e vários dias</h3>
+        <p class="hint">Três formas de um evento existir no tempo: um dia com hora marcada, um dia sem horário definido, e vários dias com abas.</p>
+        <div class="demo">
+          <div class="grid grid-3">
+            <div class="card">
+              <div class="meta-row" style="margin-bottom: var(--ccf-space-2); font-weight: var(--ccf-font-weight-bold); color: var(--ccf-color-text);">Um dia, com horário</div>
+              <div class="meta-row"><svg class="icon" aria-hidden="true"><use href="#icon-calendar"/></svg> Sábado, 3 de outubro · 14h às 16h</div>
+            </div>
+            <div class="card">
+              <div class="meta-row" style="margin-bottom: var(--ccf-space-2); font-weight: var(--ccf-font-weight-bold); color: var(--ccf-color-text);">Um dia, sem horário definido</div>
+              <div class="meta-row"><svg class="icon" aria-hidden="true"><use href="#icon-calendar"/></svg> Domingo, 18 de outubro · dia todo / horário a confirmar</div>
+            </div>
+            <div class="card">
+              <div class="meta-row" style="margin-bottom: var(--ccf-space-3); font-weight: var(--ccf-font-weight-bold); color: var(--ccf-color-text);">Vários dias</div>
+              <div class="day-tabs" role="tablist" aria-label="Dias do evento">
+                <button type="button" class="day-tab" role="tab" aria-selected="true">Dia 1 — 10/10</button>
+                <button type="button" class="day-tab" role="tab" aria-selected="false">Dia 2 — 11/10</button>
+              </div>
+              <p class="hint" style="font-size: var(--ccf-text-xs); margin-bottom:0;">Mockup visual — na página real cada aba mostra a programação daquele dia. Ver item i abaixo.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- i. Programação por dia -->
+      <div class="component-block">
+        <h3>i. Programação do dia selecionado</h3>
+        <p class="hint">Dentro de um evento de vários dias, a lista de horários do dia em foco — mesmo componente de linha do tempo usado no detalhe completo.</p>
+        <div class="demo">
+          <div class="day-tabs" role="tablist" aria-label="Dias do evento">
+            <button type="button" class="day-tab" role="tab" aria-selected="true">Dia 1 — 10/10</button>
+            <button type="button" class="day-tab" role="tab" aria-selected="false">Dia 2 — 11/10</button>
+          </div>
+          <div class="schedule">
+            <div class="schedule-item"><div class="schedule-time">09h00</div><div class="schedule-content"><h4>Abertura e acolhida</h4><p>Recepção das famílias na entrada da sede.</p></div></div>
+            <div class="schedule-item"><div class="schedule-time">10h00</div><div class="schedule-content"><h4>Troca de roupas e brinquedos</h4><p>Mesas organizadas por faixa etária.</p></div></div>
+            <div class="schedule-item"><div class="schedule-time">15h00</div><div class="schedule-content"><h4>Encerramento do dia</h4><p>Balanço das doações recebidas e repassadas.</p></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- j. Convidados -->
+      <div class="component-block">
+        <h3>j. Convidados com foto e apresentação</h3>
+        <p class="hint">Nome, papel e uma bio curta por convidado. Quando há foto real do convidado, ela
+          preenche o avatar (recorte por <code>object-fit: cover</code>); sem foto disponível, o padrão
+          usa as iniciais no lugar da imagem — como nos outros três cartões abaixo.</p>
+        <div class="demo">
+          <div class="guest-grid">
+            <div class="guest-card">
+              <div class="guest-avatar guest-avatar-photo photo-placeholder"><svg class="icon" aria-hidden="true"><use href="#icon-photo"/></svg> Foto (placeholder)</div>
+              <div><div class="guest-name">Beatriz Nunes (ilustrativo)</div><div class="guest-role">Convidada especial</div></div>
+              <p class="guest-bio">Exemplo com foto real de perfil — nos demais cartões, sem foto disponível, o avatar usa as iniciais.</p>
+            </div>
+            <div class="guest-card">
+              <div class="guest-avatar">AF</div>
+              <div><div class="guest-name">Ana Ferreira (ilustrativo)</div><div class="guest-role">Educadora social</div></div>
+              <p class="guest-bio">Conduz oficinas com crianças e adolescentes há alguns anos, com foco em dinâmicas de grupo.</p>
+            </div>
+            <div class="guest-card">
+              <div class="guest-avatar">MR</div>
+              <div><div class="guest-name">Marcos Ribeiro (ilustrativo)</div><div class="guest-role">Voluntário de logística</div></div>
+              <p class="guest-bio">Cuida da organização de materiais e da recepção de doações nos eventos da ONG.</p>
+            </div>
+            <div class="guest-card">
+              <div class="guest-avatar">LS</div>
+              <div><div class="guest-name">Lúcia Souza (ilustrativo)</div><div class="guest-role">Convidada especial</div></div>
+              <p class="guest-bio">Compartilha experiências de parentalidade em rodas de conversa abertas à comunidade.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- k. Local -->
+      <div class="component-block" id="local">
+        <h3>k. Local</h3>
+        <p class="hint">O endereço padrão é a sede do CCF, mas cada evento pode usar um local diferente.</p>
+        <div class="demo">
+          <div class="grid grid-2">
+            <div class="card">
+              <div class="meta-row" style="margin-bottom: var(--ccf-space-3); font-weight: var(--ccf-font-weight-bold); color: var(--ccf-color-text);">Local padrão da sede</div>
+              <div class="location-block">
+                <svg class="icon" aria-hidden="true"><use href="#icon-pin"/></svg>
+                <div>
+                  <div>Rua Calasans, 200, Vila Santa Catarina, São Paulo, SP, CEP 04369-100</div>
+                  <span class="confirm-note"><svg class="icon" aria-hidden="true"><use href="#icon-info"/></svg> Confirmar com a organização antes de publicar</span>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="meta-row" style="margin-bottom: var(--ccf-space-3); font-weight: var(--ccf-font-weight-bold); color: var(--ccf-color-text);">Local diferente, definido só para este evento</div>
+              <div class="location-block">
+                <svg class="icon" aria-hidden="true"><use href="#icon-pin"/></svg>
+                <div>
+                  <div>Centro Comunitário Vila Guacuri (endereço ilustrativo)</div>
+                  <span class="confirm-note"><svg class="icon" aria-hidden="true"><use href="#icon-info"/></svg> Exemplo fictício — só para mostrar que o campo é editável por evento</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- l. Rodapé institucional -->
+      <div class="component-block">
+        <h3>l. Rodapé institucional</h3>
+        <p class="hint">Logo em versão ícone sobre fundo escuro, links sociais reais, endereço padrão e um texto institucional breve. Mostrado aqui dentro de um cartão — não é o rodapé desta página de documentação.</p>
+        <div class="demo">
+          <div class="footer-demo">
+            <div>
+              <span class="footer-icon"><img src="icon-ccf.png" alt="Coração Família" /></span>
+              <h4>Centro de Convivência Familiar Coração Família</h4>
+              <p>Organização sem fins lucrativos na Vila Santa Catarina, Zona Sul de São Paulo.</p>
+              <div class="social-links">
+                <a href="https://www.instagram.com/coracaofamilia/" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#icon-instagram"/></svg><span class="visually-hidden">Instagram</span></a>
+                <a href="https://www.facebook.com/coracaofamilia/" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#icon-facebook"/></svg><span class="visually-hidden">Facebook</span></a>
+              </div>
+            </div>
+            <div class="addr">
+              <h4>Endereço</h4>
+              <div>Rua Calasans, 200</div>
+              <div>Vila Santa Catarina, São Paulo, SP</div>
+              <div>CEP 04369-100</div>
+              <span class="confirm-note" style="margin-top: var(--ccf-space-2);"><svg class="icon" aria-hidden="true"><use href="#icon-info"/></svg> Confirmar com a organização antes de publicar</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================== ESTADOS VAZIOS ============================== -->
+  <section id="estados-vazios">
+    <div class="shell">
+      <div class="section-head">
+        <h2>Estados vazios</h2>
+        <p>Cada campo da página de evento é opcional. Quando não é preenchido, a seção inteira desaparece — nunca vira um espaço em branco ou um botão desabilitado.</p>
+      </div>
+
+      <div class="component-block">
+        <h3>Banner</h3>
+        <div class="empty-pair">
+          <div>
+            <span class="fill-label">Preenchido</span>
+            <div class="banner" style="max-height: 10rem;"><div class="banner-noimg photo-placeholder"><svg class="icon" aria-hidden="true"><use href="#icon-photo"/></svg> Banner do evento (placeholder)</div></div>
+          </div>
+          <div>
+            <span class="empty-note">Campo não preenchido — a seção inteira não aparece na página real; aqui usamos um contorno tracejado só para fins de documentação.</span>
+            <div class="empty-demo">Sem banner — o card usa só a etiqueta de data e o título.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="component-block">
+        <h3>Convidados</h3>
+        <div class="empty-pair">
+          <div>
+            <span class="fill-label">Preenchido</span>
+            <div class="guest-grid">
+              <div class="guest-card">
+                <div class="guest-avatar">AF</div>
+                <div><div class="guest-name">Ana Ferreira (ilustrativo)</div><div class="guest-role">Educadora social</div></div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <span class="empty-note">Campo não preenchido — a seção inteira não aparece na página real; aqui usamos um contorno tracejado só para fins de documentação.</span>
+            <div class="empty-demo">Sem convidados cadastrados — a seção "Convidados" não aparece.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="component-block">
+        <h3>Programação</h3>
+        <div class="empty-pair">
+          <div>
+            <span class="fill-label">Preenchido</span>
+            <div class="schedule">
+              <div class="schedule-item"><div class="schedule-time">09h00</div><div class="schedule-content"><h4>Abertura</h4></div></div>
+            </div>
+          </div>
+          <div>
+            <span class="empty-note">Campo não preenchido — a seção inteira não aparece na página real; aqui usamos um contorno tracejado só para fins de documentação.</span>
+            <div class="empty-demo">Sem programação detalhada — a seção "Programação" não aparece.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="component-block">
+        <h3>Inscrição / contato</h3>
+        <div class="empty-pair">
+          <div>
+            <span class="fill-label">Preenchido</span>
+            <a class="btn btn-primary" href="#"><svg class="icon" aria-hidden="true"><use href="#icon-external"/></svg> Inscreva-se</a>
+          </div>
+          <div>
+            <span class="empty-note">Campo não preenchido — a seção inteira não aparece na página real; aqui usamos um contorno tracejado só para fins de documentação.</span>
+            <div class="empty-demo">Sem link de inscrição ou contato — nenhum botão aparece. Se o evento for gratuito, um texto simples pode indicar isso, como no item "e" de Componentes.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="component-block">
+        <h3>Local diferente do padrão</h3>
+        <div class="empty-pair">
+          <div>
+            <span class="fill-label">Preenchido (local próprio do evento)</span>
+            <div class="location-block">
+              <svg class="icon" aria-hidden="true"><use href="#icon-pin"/></svg>
+              <div>Centro Comunitário Vila Guacuri (endereço ilustrativo)</div>
+            </div>
+          </div>
+          <div>
+            <span class="empty-note">Campo não preenchido — diferente dos outros, este nunca fica em branco: o evento passa a usar automaticamente o endereço padrão da sede.</span>
+            <div class="location-block">
+              <svg class="icon" aria-hidden="true"><use href="#icon-pin"/></svg>
+              <div>
+                <div>Rua Calasans, 200, Vila Santa Catarina, São Paulo, SP, CEP 04369-100</div>
+                <span class="confirm-note"><svg class="icon" aria-hidden="true"><use href="#icon-info"/></svg> Confirmar com a organização antes de publicar</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== TOKENS ============================== -->
+  <section id="tokens">
+    <div class="shell">
+      <div class="section-head">
+        <h2>Design tokens</h2>
+        <p>A referência viva dos tokens principais. Lista completa em <code>ccf_design_tokens.css</code>.</p>
+      </div>
+
+      <div class="token-category">
+        <h3>Cores primitivas principais</h3>
+        <div class="token-list">
+          <div class="token"><code>--ccf-p-red-logo</code><span class="desc">Vermelho vivo do logo [marca]</span></div>
+          <div class="token"><code>--ccf-p-blue-logo</code><span class="desc">Azul vivo do logo [marca]</span></div>
+          <div class="token"><code>--ccf-p-red-500 / 700</code><span class="desc">Vermelho de interface</span></div>
+          <div class="token"><code>--ccf-p-blue-700 / 800</code><span class="desc">Azul institucional</span></div>
+          <div class="token"><code>--ccf-p-green-700</code><span class="desc">Único verde seguro com texto branco</span></div>
+          <div class="token"><code>--ccf-p-green-500</code><span class="desc">Verde claro, só texto escuro por cima</span></div>
+          <div class="token"><code>--ccf-p-yellow-400 / amber-ink</code><span class="desc">Amarelo e seu texto seguro</span></div>
+          <div class="token"><code>--ccf-p-coral-400</code><span class="desc">Acento categórico, não é status</span></div>
+          <div class="token"><code>--ccf-p-graphite-900 / gray-600</code><span class="desc">Texto principal e secundário</span></div>
+          <div class="token"><code>--ccf-p-cream-50 / white / black</code><span class="desc">Fundo, neutro de interface, contorno da marca</span></div>
+        </div>
+      </div>
+
+      <div class="token-category">
+        <h3>Cores semânticas principais</h3>
+        <div class="token-list">
+          <div class="token"><code>--ccf-color-primary / -hover / -strong</code><span class="desc">Vermelho de ação</span></div>
+          <div class="token"><code>--ccf-color-secondary / -hover</code><span class="desc">Azul institucional</span></div>
+          <div class="token"><code>--ccf-color-success / -warning / -danger</code><span class="desc">Estados de feedback</span></div>
+          <div class="token"><code>--ccf-color-background / -surface / -surface-alt</code><span class="desc">Fundos da interface</span></div>
+          <div class="token"><code>--ccf-color-text / -text-muted</code><span class="desc">Texto principal e secundário</span></div>
+          <div class="token"><code>--ccf-color-border / -border-strong</code><span class="desc">Bordas</span></div>
+          <div class="token"><code>--ccf-focus-ring</code><span class="desc">Anel de foco completo, uso direto</span></div>
+        </div>
+      </div>
+
+      <div class="token-category">
+        <h3>Tipografia</h3>
+        <div class="token-list">
+          <div class="token"><code>--ccf-font-sans / -display</code><span class="desc">Nunito Sans e Fraunces</span></div>
+          <div class="token"><code>--ccf-text-xs … --ccf-text-display</code><span class="desc">Escala tipográfica completa</span></div>
+          <div class="token"><code>--ccf-font-weight-regular … black</code><span class="desc">400 a 800</span></div>
+          <div class="token"><code>--ccf-line-height-tight / snug / normal</code><span class="desc">Altura de linha por contexto</span></div>
+        </div>
+      </div>
+
+      <div class="token-category">
+        <h3>Espaçamento, raio e sombra</h3>
+        <div class="token-list">
+          <div class="token"><code>--ccf-space-1 … --ccf-space-24</code><span class="desc">Escala de espaçamento</span></div>
+          <div class="token"><code>--ccf-radius-sm … --ccf-radius-full</code><span class="desc">Escala de raio</span></div>
+          <div class="token"><code>--ccf-shadow-sm / -md</code><span class="desc">Elevação</span></div>
+          <div class="token"><code>--ccf-content-width / -reading-width</code><span class="desc">Larguras de layout</span></div>
+        </div>
+      </div>
+
+      <div class="token-category">
+        <h3>Componentes da Agenda</h3>
+        <div class="token-list">
+          <div class="token"><code>--ccf-event-card-*</code><span class="desc">Card de evento na lista</span></div>
+          <div class="token"><code>--ccf-date-badge-*</code><span class="desc">Etiqueta de data</span></div>
+          <div class="token"><code>--ccf-status-open/limited/full/changed/cancelled-*</code><span class="desc">5 variantes de status</span></div>
+          <div class="token"><code>--ccf-timeline-*</code><span class="desc">Trilho cronológico</span></div>
+          <div class="token"><code>--ccf-day-tab-*</code><span class="desc">Abas de dia</span></div>
+          <div class="token"><code>--ccf-schedule-*</code><span class="desc">Linha de horário</span></div>
+          <div class="token"><code>--ccf-guest-*</code><span class="desc">Card de convidado</span></div>
+          <div class="token"><code>--ccf-banner-*</code><span class="desc">Banner do evento</span></div>
+          <div class="token"><code>--ccf-footer-*</code><span class="desc">Rodapé institucional</span></div>
+          <div class="token"><code>--ccf-empty-*</code><span class="desc">Só documentação — nunca produto real</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="shell">
+    <p>CCF — Design System da Agenda. Documento vivo, ver <code>AGENTS.md</code>.</p>
+    <p>Desenvolvido com <span aria-hidden="true">&lt;3</span><span class="visually-hidden">amor</span> por <a href="https://www.hiperbold.com.br" target="_blank" rel="noopener nofollow">Hiperbold</a>.</p>
+  </div>
+</footer>
+
+</body>
+</html>

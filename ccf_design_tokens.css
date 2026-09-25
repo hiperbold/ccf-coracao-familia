@@ -1,0 +1,313 @@
+/* ==========================================================================
+   Coração Família — Design Tokens
+   Fonte única da verdade de cor, tipografia, espaçamento, raio, sombra e
+   estado interativo. Nenhum componente deve usar valor literal (hex, px de
+   cor, etc.) fora daqui — sempre var(--ccf-...).
+
+   Três camadas:
+     1. PRIMITIVAS   — valores brutos, sem significado de uso.
+     2. SEMÂNTICAS   — o "papel" de cada cor/valor na interface.
+     3. COMPONENTES  — tokens dedicados a uma peça específica da Agenda.
+
+   Ver ccf_design_system.html §Marca para orientação de uso do ícone/logo.
+   ========================================================================== */
+
+:root {
+  color-scheme: light;
+
+  /* ========================================================================
+     CAMADA 1 — PRIMITIVAS
+     Cada cor é marcada [MARCA] (extraída do arquivo oficial do logo,
+     icon-ccf.png) ou [INTERFACE] (criada para a UI; não existe no logo).
+     ======================================================================== */
+
+  /* --- Vermelho ------------------------------------------------------- */
+  --ccf-p-red-logo:   #FA0D13; /* [MARCA] vermelho vivo do coração-mascote, amostrado do PNG */
+  --ccf-p-red-500:    #D9363E; /* [INTERFACE] adaptação: mesma família, saturação reduzida — usada em botões e áreas grandes onde o vermelho puro da marca cansaria a vista */
+  --ccf-p-red-600:    #C42B34; /* [INTERFACE] hover do vermelho-500 */
+  --ccf-p-red-700:    #A91F2B; /* [INTERFACE] tom escuro — texto sobre fundo claro, estado ativo/pressionado */
+  --ccf-p-red-50:     #FCEBEC; /* [INTERFACE] fundo suave (tags, alertas) */
+
+  /* --- Azul ------------------------------------------------------------ */
+  --ccf-p-blue-logo:  #0023C2; /* [MARCA] azul vivo dos tênis do mascote, amostrado do PNG */
+  --ccf-p-blue-700:   #345B73; /* [INTERFACE] adaptação institucional: dessaturado para uso extenso em texto/UI — o azul vivo da marca falha contraste e é forte demais para grandes áreas */
+  --ccf-p-blue-800:   #274456; /* [INTERFACE] hover/ativo do azul institucional */
+  --ccf-p-blue-50:    #EEF4F7; /* [INTERFACE] fundo suave */
+
+  /* --- Verde, amarelo, coral, grafite ----------------------------------
+     Nenhuma destas cores existe no logo. São extensões de interface
+     criadas para status e categorização, escolhidas para harmonizar com
+     o vermelho/azul da marca sem competir com eles. */
+  --ccf-p-green-700:  #416B53; /* [INTERFACE] verde escurecido — ÚNICO tom de verde aprovado para texto/ícone branco sobre fundo sólido (6,1:1, WCAG AA) */
+  --ccf-p-green-500:  #4F8265; /* [INTERFACE] verde original do rascunho anterior — mantido só como tom claro/decorativo ou com texto escuro por cima; com texto BRANCO fica em 4,45:1, abaixo do AA (4.5:1) para texto comum — nunca usar --ccf-p-green-500 com texto branco */
+  --ccf-p-green-50:   #EEF5F0; /* [INTERFACE] fundo suave */
+  --ccf-p-yellow-400: #F2B544; /* [INTERFACE] amarelo — só com texto escuro (--ccf-p-amber-ink) por cima, nunca texto branco */
+  --ccf-p-yellow-50:  #FFF6DF; /* [INTERFACE] fundo suave */
+  --ccf-p-amber-ink:  #805400; /* [INTERFACE] texto sobre fundo amarelo/creme — 6,1:1 sobre --ccf-p-yellow-50 */
+  --ccf-p-coral-400:  #EF775F; /* [INTERFACE] acento decorativo/categórico — não usar como cor de status (não se confunde com sucesso/alerta/erro) */
+  --ccf-p-coral-50:   #FDEEEA; /* [INTERFACE] fundo suave */
+
+  /* --- Neutros ----------------------------------------------------------
+     Preto e branco puros existem no logo (contorno e fundo do mascote);
+     os demais neutros são interface. */
+  --ccf-p-black:      #000000; /* [MARCA] contorno do mascote — reservar para contexto de marca, não usar como cor de texto corrido */
+  --ccf-p-white:      #FFFFFF; /* [MARCA] também usada como neutro de interface */
+  --ccf-p-cream-50:   #FFF8F1; /* [INTERFACE] fundo acolhedor, não está no logo */
+  --ccf-p-graphite-900: #303336; /* [INTERFACE] texto principal */
+  --ccf-p-gray-600:   #6B7075; /* [INTERFACE] texto secundário — 4,75:1 sobre o creme real da interface (--ccf-p-cream-50); 5,0:1 sobre branco puro */
+  --ccf-p-gray-300:   #D9D3CC; /* [INTERFACE] bordas fortes, estado desabilitado */
+  --ccf-p-line:       #E9E0D8; /* [INTERFACE] borda padrão, sutil */
+  --ccf-p-surface-alt:#FFFCF9; /* [INTERFACE] fundo alternativo (cabeçalho de tabela, faixas) */
+
+  /* ========================================================================
+     Tipografia, espaçamento, raio, sombra, movimento — primitivas de escala
+     ======================================================================== */
+
+  --ccf-font-sans:    "Nunito Sans", Arial, sans-serif;   /* texto corrido, UI, formulários */
+  --ccf-font-display: "Fraunces", Georgia, serif;         /* títulos emocionais/editoriais */
+
+  --ccf-text-2xs:  0.625rem;  /* 10px — uso pontual (ex.: mês na etiqueta de data), abaixo da escala normal */
+  --ccf-text-xs:   0.75rem;   /* 12px — legendas, metadados */
+  --ccf-text-sm:   0.875rem;  /* 14px — texto auxiliar, nav */
+  --ccf-text-base: 1rem;      /* 16px — corpo de texto */
+  --ccf-text-lg:   1.125rem;  /* 18px — corpo destacado, lead */
+  --ccf-text-xl:   1.25rem;   /* 20px — subtítulo de card */
+  --ccf-text-2xl:  1.5rem;    /* 24px — título de card/seção pequena */
+  --ccf-text-3xl:  2rem;      /* 32px — título de seção */
+  --ccf-text-h2:   clamp(1.75rem, 4vw, 2.75rem);  /* título de seção (display) */
+  --ccf-text-h1:   clamp(2.5rem, 6vw, 4rem);      /* título de página */
+  --ccf-text-display: clamp(2.75rem, 7vw, 5.5rem); /* hero institucional */
+
+  --ccf-line-height-tight:  1.05;
+  --ccf-line-height-snug:   1.25;
+  --ccf-line-height-normal: 1.55;
+
+  --ccf-letter-spacing-tight: -0.03em; /* títulos display */
+  --ccf-letter-spacing-wide:  0.08em;  /* rótulos maiúsculos */
+
+  --ccf-font-weight-regular:  400;
+  --ccf-font-weight-semibold: 600;
+  --ccf-font-weight-bold:     700;
+  --ccf-font-weight-black:    800;
+
+  --ccf-space-1:  0.25rem;
+  --ccf-space-2:  0.5rem;
+  --ccf-space-3:  0.75rem;
+  --ccf-space-4:  1rem;
+  --ccf-space-5:  1.25rem;
+  --ccf-space-6:  1.5rem;
+  --ccf-space-8:  2rem;
+  --ccf-space-10: 2.5rem;
+  --ccf-space-12: 3rem;
+  --ccf-space-16: 4rem;
+  --ccf-space-20: 5rem;
+  --ccf-space-24: 6rem;
+
+  --ccf-radius-sm:   0.5rem;
+  --ccf-radius-md:   0.75rem;
+  --ccf-radius-lg:   1rem;
+  --ccf-radius-xl:   1.5rem;
+  --ccf-radius-2xl:  2rem;
+  --ccf-radius-full: 999px;
+
+  --ccf-shadow-sm: 0 0.5rem 1.5rem rgb(48 51 54 / 8%);
+  --ccf-shadow-md: 0 1.125rem 3.125rem rgb(48 51 54 / 12%);
+  --ccf-shadow-focus-ring: 0 0 0 3px rgb(52 91 115 / 35%); /* uso pontual; preferir --ccf-focus-ring completo abaixo */
+
+  --ccf-duration-fast: 150ms;
+  --ccf-duration-base: 200ms;
+  --ccf-easing-standard: ease-in-out;
+  --ccf-easing-out: ease-out;
+
+  --ccf-opacity-disabled: 0.5;
+
+  --ccf-content-width:  75rem;   /* 1200px — largura máxima do conteúdo */
+  --ccf-reading-width:  48rem;   /* 768px — largura confortável de leitura (descrição de evento) */
+  --ccf-page-gutter: clamp(1rem, 4vw, 2rem);
+
+  /* Breakpoints de referência (documentação; @media exige valor literal) */
+  --ccf-bp-sm:  480px;  /* celular grande / início do layout de 2 colunas em cards pequenos */
+  --ccf-bp-md:  768px;  /* tablet — nav completa, listas em grade */
+  --ccf-bp-lg:  1024px; /* desktop — layout de 2-3 colunas */
+
+  --ccf-z-header:  20;
+  --ccf-z-overlay: 40;
+  --ccf-z-modal:   50;
+
+  /* ========================================================================
+     CAMADA 2 — SEMÂNTICAS
+     O "papel" de cada primitiva. Componentes devem consumir esta camada,
+     não a camada 1, sempre que possível.
+     ======================================================================== */
+
+  --ccf-color-primary:        var(--ccf-p-red-500);
+  --ccf-color-primary-hover:  var(--ccf-p-red-600);
+  --ccf-color-primary-strong: var(--ccf-p-red-700); /* texto/estado ativo */
+  --ccf-color-on-primary:     var(--ccf-p-white);
+
+  --ccf-color-secondary:       var(--ccf-p-blue-700);
+  --ccf-color-secondary-hover: var(--ccf-p-blue-800);
+  --ccf-color-on-secondary:    var(--ccf-p-white);
+
+  --ccf-color-success:      var(--ccf-p-green-700); /* único verde seguro com texto/ícone branco */
+  --ccf-color-on-success:   var(--ccf-p-white);
+  --ccf-color-warning:      var(--ccf-p-yellow-400);
+  --ccf-color-warning-text: var(--ccf-p-amber-ink);  /* nunca texto branco sobre amarelo */
+  --ccf-color-danger:       var(--ccf-p-red-700);
+  --ccf-color-on-danger:    var(--ccf-p-white);
+  --ccf-color-info:         var(--ccf-p-blue-700);
+  --ccf-color-on-info:      var(--ccf-p-white);
+  --ccf-color-neutral:      var(--ccf-p-gray-600);   /* status "encerrado/lotado" — neutro, não é erro */
+  --ccf-color-on-neutral:   var(--ccf-p-white);
+
+  --ccf-color-background: var(--ccf-p-cream-50);
+  --ccf-color-surface:     var(--ccf-p-white);
+  --ccf-color-surface-alt: var(--ccf-p-surface-alt);
+
+  --ccf-color-text:        var(--ccf-p-graphite-900);
+  --ccf-color-text-muted:  var(--ccf-p-gray-600);
+  --ccf-color-text-on-dark:       var(--ccf-p-white);
+  --ccf-color-text-on-dark-muted: rgb(255 255 255 / 72%);
+
+  --ccf-color-border:        var(--ccf-p-line);
+  --ccf-color-border-strong: var(--ccf-p-gray-300);
+
+  --ccf-color-link:       var(--ccf-color-primary-strong);
+  --ccf-color-link-hover: var(--ccf-p-red-500);
+
+  --ccf-color-soft-primary:   var(--ccf-p-red-50);
+  --ccf-color-soft-secondary: var(--ccf-p-blue-50);
+  --ccf-color-soft-success:   var(--ccf-p-green-50);
+  --ccf-color-soft-warning:   var(--ccf-p-yellow-50);
+  --ccf-color-soft-coral:     var(--ccf-p-coral-50);
+  --ccf-color-coral:          var(--ccf-p-coral-400); /* acento categórico, não semântico */
+
+  --ccf-color-disabled-bg:   var(--ccf-p-gray-300);
+  --ccf-color-disabled-text: var(--ccf-p-gray-600);
+
+  /* Anel de foco — visível em qualquer fundo do sistema (claro ou vermelho) */
+  --ccf-focus-ring-color:  var(--ccf-p-blue-700);
+  --ccf-focus-ring-width:  3px;
+  --ccf-focus-ring-offset: 2px;
+  --ccf-focus-ring:
+    0 0 0 var(--ccf-focus-ring-offset) var(--ccf-color-background),
+    0 0 0 calc(var(--ccf-focus-ring-offset) + var(--ccf-focus-ring-width)) var(--ccf-focus-ring-color);
+
+  /* ========================================================================
+     CAMADA 3 — COMPONENTES
+     Tokens dedicados às peças reais da Agenda do Coração Família.
+     ======================================================================== */
+
+  /* --- Botão -------------------------------------------------------- */
+  --ccf-button-radius:     0.875rem;
+  --ccf-button-min-height: 3rem;      /* 48px — alvo de toque acessível */
+  --ccf-button-padding-x:  1.125rem;
+  --ccf-button-font:       var(--ccf-font-weight-black) 0.9375rem/1 var(--ccf-font-sans);
+
+  --ccf-button-primary-bg:          var(--ccf-color-primary);
+  --ccf-button-primary-bg-hover:    var(--ccf-color-primary-hover);
+  --ccf-button-primary-bg-active:   var(--ccf-color-primary-strong);
+  --ccf-button-primary-fg:          var(--ccf-color-on-primary);
+  --ccf-button-primary-shadow:      0 0.625rem 1.5rem rgb(217 54 62 / 25%);
+
+  --ccf-button-secondary-bg:        var(--ccf-color-secondary);
+  --ccf-button-secondary-bg-hover:  var(--ccf-color-secondary-hover);
+  --ccf-button-secondary-fg:        var(--ccf-color-on-secondary);
+
+  --ccf-button-outline-bg:          var(--ccf-color-surface);
+  --ccf-button-outline-fg:          var(--ccf-color-primary-strong);
+  --ccf-button-outline-border:      rgb(169 31 43 / 22%);
+
+  --ccf-button-soft-bg:             var(--ccf-color-soft-primary);
+  --ccf-button-soft-fg:             var(--ccf-color-primary-strong);
+
+  /* CTA de inscrição/contato reaproveita o botão primário — token semântico
+     próprio só para deixar a intenção explícita no HTML, sem nova cor. */
+  --ccf-cta-bg: var(--ccf-button-primary-bg);
+  --ccf-cta-fg: var(--ccf-button-primary-fg);
+
+  /* --- Card base ------------------------------------------------------ */
+  --ccf-card-bg:      var(--ccf-color-surface);
+  --ccf-card-border:  var(--ccf-color-border);
+  --ccf-card-radius:  var(--ccf-radius-xl);
+  --ccf-card-padding: var(--ccf-space-6);
+  --ccf-card-shadow:       var(--ccf-shadow-sm);
+  --ccf-card-shadow-hover: var(--ccf-shadow-md);
+
+  /* --- Card de evento (lista cronológica) ------------------------------ */
+  --ccf-event-card-gap:          var(--ccf-space-4);
+  --ccf-event-card-image-radius: var(--ccf-radius-lg);
+  --ccf-event-card-image-ratio:  16 / 10;
+
+  /* --- Etiqueta de data (dia grande + mês/semana) ---------------------- */
+  --ccf-date-badge-bg:        var(--ccf-color-soft-primary);
+  --ccf-date-badge-fg-day:    var(--ccf-color-primary-strong);
+  --ccf-date-badge-fg-month:  var(--ccf-color-primary-strong);
+  --ccf-date-badge-radius:    var(--ccf-radius-md);
+  --ccf-date-badge-size:      3.75rem; /* 60px — quadrado do card compacto */
+
+  /* --- Etiquetas de status do evento ------------------------------------
+     5 estados reais de uma agenda de eventos: nenhum reaproveita a mesma
+     cor de outro, para não depender só de cor (texto sempre acompanha). */
+  --ccf-status-open-bg:      var(--ccf-color-soft-success);
+  --ccf-status-open-fg:      var(--ccf-color-success);
+  --ccf-status-limited-bg:   var(--ccf-color-soft-warning);
+  --ccf-status-limited-fg:   var(--ccf-color-warning-text);
+  --ccf-status-full-bg:      var(--ccf-p-gray-300);
+  --ccf-status-full-fg:      var(--ccf-p-graphite-900);
+  --ccf-status-changed-bg:   var(--ccf-color-soft-secondary);
+  --ccf-status-changed-fg:   var(--ccf-color-secondary);
+  --ccf-status-cancelled-bg: var(--ccf-color-soft-primary);
+  --ccf-status-cancelled-fg: var(--ccf-color-danger);
+
+  /* --- Trilho cronológico (timeline da lista de eventos) ---------------- */
+  --ccf-timeline-line:      var(--ccf-color-border);
+  --ccf-timeline-line-width: 2px;
+  --ccf-timeline-node-size:  0.75rem;
+  --ccf-timeline-node-bg:    var(--ccf-color-primary);
+  --ccf-timeline-node-ring:  var(--ccf-color-soft-primary);
+
+  /* --- Abas de dia (evento de vários dias) ------------------------------ */
+  --ccf-day-tab-bg:            transparent;
+  --ccf-day-tab-fg:            var(--ccf-color-text-muted);
+  --ccf-day-tab-bg-active:     var(--ccf-color-primary);
+  --ccf-day-tab-fg-active:     var(--ccf-color-on-primary);
+  --ccf-day-tab-radius:        var(--ccf-radius-full);
+
+  /* --- Item de programação (linha de horário dentro de um dia) --------- */
+  --ccf-schedule-time-width: 5.5rem;
+  --ccf-schedule-divider:    var(--ccf-color-border);
+
+  /* --- Card de convidado ------------------------------------------------ */
+  --ccf-guest-avatar-size:   3.5rem;
+  --ccf-guest-avatar-radius: var(--ccf-radius-full);
+  --ccf-guest-name-fg:       var(--ccf-color-text);
+  --ccf-guest-role-fg:       var(--ccf-color-primary-strong);
+  --ccf-guest-bio-fg:        var(--ccf-color-text-muted);
+
+  /* --- Banner do evento (imagem de topo, opcional) ---------------------- */
+  --ccf-banner-radius:  var(--ccf-radius-xl);
+  --ccf-banner-ratio:   21 / 9;
+  --ccf-banner-overlay: linear-gradient(180deg, rgb(48 51 54 / 0%) 40%, rgb(48 51 54 / 78%) 100%);
+  --ccf-banner-caption-fg: var(--ccf-color-text-on-dark);
+
+  /* --- Cabeçalho / navegação --------------------------------------------- */
+  --ccf-header-bg:     rgb(255 248 241 / 86%);
+  --ccf-header-border: rgb(169 31 43 / 8%);
+  --ccf-header-blur:   16px;
+  --ccf-nav-link-fg:         var(--ccf-color-text-muted);
+  --ccf-nav-link-fg-hover:   var(--ccf-color-primary-strong);
+  --ccf-nav-link-bg-hover:   var(--ccf-color-soft-primary);
+
+  /* --- Rodapé institucional ----------------------------------------------- */
+  --ccf-footer-bg:        var(--ccf-p-graphite-900);
+  --ccf-footer-fg:        var(--ccf-color-text-on-dark);
+  --ccf-footer-fg-muted:  var(--ccf-color-text-on-dark-muted);
+  --ccf-footer-border:    rgb(255 255 255 / 12%);
+  --ccf-footer-link-fg-hover: var(--ccf-p-red-logo); /* único uso do vermelho vivo da marca fora do lockup — ver §Marca */
+
+  /* --- Estado vazio / campo opcional não preenchido ----------------------- */
+  --ccf-empty-border: dashed 1.5px var(--ccf-color-border-strong);
+  --ccf-empty-fg:     var(--ccf-color-text-muted);
+  --ccf-empty-bg:     var(--ccf-color-surface-alt);
+}
