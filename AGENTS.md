@@ -71,5 +71,5 @@ Esta pesquisa é uma orientação inicial, não uma decisão de implementação.
 
 ## Estado atual do repositório (25/09/2026)
 
-- `ccf_design_system.html` + `ccf_design_tokens.css`: design system vivo da Agenda, publicado em https://hiperbold.github.io/ccf-coracao-familia/ccf_design_system.html (repo público, para compartilhar com a ONG). Ainda não há código de aplicação (site/CMS funcional) — só a documentação viva do sistema visual e dos componentes.
-- Próxima etapa: modelos de página desktop (homepage e página interna de evento, 2 opções de cada), depois versão mobile da opção aprovada.
+- `ccf_design_system.html` + `ccf_design_tokens.css`: design system vivo da Agenda, publicado em https://hiperbold.github.io/ccf-coracao-familia/ccf_design_system.html (repo público, para compartilhar com a ONG). **Aprovado pelo Filipe em 25/09/2026** (fontes, componentes, layout, alinhamentos). É a fonte de verdade para tudo que vier depois. Ainda não há código de aplicação (site/CMS funcional) — só a documentação viva do sistema visual e dos componentes.
+- Próxima etapa (em andamento): modelos de página desktop (homepage e página interna de evento, 2 opções de cada). Depois: Filipe aprova um modelo desktop e a versão mobile correspondente; aprovado, cada modelo vira um `.html` próprio com assets, publicado do mesmo jeito (GitHub Pages).
