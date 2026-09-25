@@ -25,6 +25,8 @@ Cada evento terá sua própria página. Um evento pode ocupar um dia (com ou sem
 
 O local padrão é a sede do CCF, mas deve ser possível alterá-lo em cada evento pelo painel administrativo.
 
+Neste primeiro momento não haverá cadastro/login de visitante: a frente pública é só a agenda aberta, sem conta de usuário. Cadastro/autenticação, se vier a existir, é só para quem administra o conteúdo (painel do CMS).
+
 ## Direção preliminar, ainda não aprovada como especificação
 
 - Usar um CMS com conteúdo de eventos estruturado, em vez de adotar uma plataforma de ingressos completa.
@@ -44,9 +46,17 @@ Além de título, imagem/banner, resumo/descrição, datas e horários, programa
 - orientações de acesso, acessibilidade, transporte ou o que levar, quando relevante;
 - contatos e links associados;
 - status de alteração, cancelamento ou lotação, para evitar que visitantes se desloquem com informação desatualizada;
-- compartilhamento e opção de adicionar à agenda pessoal.
+- compartilhamento e opção de adicionar à agenda pessoal — confirmado pelo Filipe como funcionalidade real a implementar (botões já desenhados no design system), não só decoração.
 
 Todos os campos opcionais devem desaparecer da página pública quando não forem preenchidos.
+
+O bloco de local sempre vem com um mini-mapa (embed do Google Maps, sem chave de API — funciona só com o endereço) e um link direto de rota (`google.com/maps/dir/?api=1&destination=...`).
+
+## Mídia (banners, fotos)
+
+Banner de evento e fotos de convidado devem ser convertidas para WebP no momento do upload (painel administrativo), guardando só a versão web; o arquivo original enviado não fica armazenado, para economizar espaço em disco. Detalhar o pipeline exato (biblioteca de conversão, tamanhos gerados) quando a implementação do Payload começar.
+
+Placeholders de imagem usados no design system ficam em `placeholder/` (fora do fluxo real do produto, só para a documentação viva): `Beatriz-Nunes.webp` (foto de convidado) e `banner-evento.webp` (banner de evento, 16:9).
 
 ## Pesquisa inicial de referências (2026-09-25)
 
@@ -57,4 +67,9 @@ Todos os campos opcionais devem desaparecer da página pública quando não fore
 - **pretix** — https://github.com/pretix/pretix — plataforma madura de pré-venda e gestão de ingressos para eventos; mais indicada se houver venda/controle de inscrições.
 - **Payload CMS** — https://payloadcms.com/docs/admin/overview — o painel administrativo, autenticação, coleções e controles de acesso são documentados; o site ainda precisa de um modelo e de uma interface próprios. O template oficial para sites pode ser o ponto de partida técnico.
 
-Esta pesquisa é uma orientação inicial, não uma decisão de implementação. Não há código de aplicação neste repositório ainda; no momento ele contém os três arquivos de marca listados acima.
+Esta pesquisa é uma orientação inicial, não uma decisão de implementação.
+
+## Estado atual do repositório (25/09/2026)
+
+- `ccf_design_system.html` + `ccf_design_tokens.css`: design system vivo da Agenda, publicado em https://hiperbold.github.io/ccf-coracao-familia/ccf_design_system.html (repo público, para compartilhar com a ONG). Ainda não há código de aplicação (site/CMS funcional) — só a documentação viva do sistema visual e dos componentes.
+- Próxima etapa: modelos de página desktop (homepage e página interna de evento, 2 opções de cada), depois versão mobile da opção aprovada.

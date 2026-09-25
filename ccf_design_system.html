@@ -815,6 +815,30 @@
     padding: var(--ccf-space-1) var(--ccf-space-2);
     border-radius: var(--ccf-radius-sm);
   }
+  .map-embed {
+    margin-top: var(--ccf-space-4);
+    border-radius: var(--ccf-radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--ccf-color-border);
+  }
+  .map-embed iframe {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 0;
+  }
+  .map-route-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--ccf-space-2);
+    margin-top: var(--ccf-space-3);
+    font-size: var(--ccf-text-sm);
+    font-weight: var(--ccf-font-weight-bold);
+    color: var(--ccf-color-primary-strong);
+    text-decoration: none;
+  }
+  .map-route-link:hover { color: var(--ccf-color-primary); }
+  .map-route-link .icon { width: 1rem; height: 1rem; }
 
   /* --- Detalhe completo do evento (mockup de página) ------------------------ */
   .page-mock {
@@ -1405,7 +1429,7 @@
         <div class="demo">
           <div class="page-mock" style="padding: var(--ccf-space-4) var(--ccf-space-6); gap: var(--ccf-space-3);">
             <div style="display:flex; align-items:center; justify-content:space-between; gap: var(--ccf-space-4); flex-wrap:wrap;">
-              <img src="logo-ccf-lq.png" alt="Coração Família" style="width: 8rem;" />
+              <img src="logo-ccf-lq.png" alt="Coração Família" style="width: 4rem;" />
               <nav aria-label="Navegação da Agenda pública (exemplo)" style="display:flex; gap: var(--ccf-space-1); flex-wrap:wrap;">
                 <a href="#" style="text-decoration:none; font-size:var(--ccf-text-sm); font-weight:var(--ccf-font-weight-bold); color:var(--ccf-nav-link-fg); padding: var(--ccf-space-2) var(--ccf-space-3); border-radius: var(--ccf-radius-full);">Início</a>
                 <a href="#" style="text-decoration:none; font-size:var(--ccf-text-sm); font-weight:var(--ccf-font-weight-bold); color:var(--ccf-nav-link-fg); padding: var(--ccf-space-2) var(--ccf-space-3); border-radius: var(--ccf-radius-full);">Agenda</a>
@@ -1541,10 +1565,10 @@
       <!-- f. Detalhe do evento -->
       <div class="component-block" id="detalhe-evento">
         <h3>f. Detalhe do evento (página completa, preenchida)</h3>
-        <p class="hint">Mockup de uma página de evento com todos os campos preenchidos: banner, título, badges, descrição, programação de um dia, convidados, local e ações.</p>
+        <p class="hint">Mockup de uma página de evento com todos os campos preenchidos: banner, título, badges, descrição, programação de um dia, convidados, local e ações. O banner abaixo é uma peça pronta (arte com texto embutido, como a organização costuma produzir); o título em HTML continua presente na página mesmo assim, para leitor de tela, SEO e para quando o banner for só uma foto sem texto.</p>
         <div class="page-mock">
           <div class="banner">
-            <div class="banner-noimg photo-placeholder"><svg class="icon" aria-hidden="true"><use href="#icon-photo"/></svg> Banner do evento (placeholder)</div>
+            <img src="placeholder/banner-evento.webp" alt="Banner do evento: Feira de Leitura e Troca Comunitária, 10 e 11 de outubro, com convidados Ana Ferreira e Marcos Ribeiro" />
             <div class="banner-caption">
               <span class="status-badge status-limited"><svg class="icon" aria-hidden="true"><use href="#icon-alert"/></svg> Vagas limitadas</span>
             </div>
@@ -1602,6 +1626,10 @@
               <div>
                 <div>Rua Calasans, 200, Vila Santa Catarina, São Paulo, SP, CEP 04369-100</div>
                 <span class="confirm-note"><svg class="icon" aria-hidden="true"><use href="#icon-info"/></svg> Confirmar com a organização antes de publicar</span>
+                <div class="map-embed">
+                  <iframe src="https://www.google.com/maps?q=Rua+Calasans%2C+200%2C+Vila+Santa+Catarina%2C+S%C3%A3o+Paulo%2C+SP%2C+CEP+04369-100&#38;output=embed" title="Mapa: Rua Calasans, 200, Vila Santa Catarina, São Paulo, SP" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+                <a class="map-route-link" href="https://www.google.com/maps/dir/?api=1&#38;destination=Rua+Calasans%2C+200%2C+Vila+Santa+Catarina%2C+S%C3%A3o+Paulo%2C+SP%2C+CEP+04369-100" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#icon-external"/></svg> Ver rota</a>
               </div>
             </div>
           </div>
@@ -1621,7 +1649,7 @@
         <div class="demo">
           <div class="grid grid-2">
             <a class="event-card" href="#">
-              <div class="event-card-image photo-placeholder"><svg class="icon" aria-hidden="true"><use href="#icon-photo"/></svg> Foto do evento (placeholder)</div>
+              <img class="event-card-image" src="placeholder/banner-evento.webp" alt="" />
               <div class="event-card-body">
                 <div style="display:flex; gap: var(--ccf-space-4); align-items:flex-start;">
                   <div class="date-badge"><span class="day">10</span><span class="month">out</span></div>
@@ -1693,7 +1721,7 @@
         <div class="demo">
           <div class="guest-grid">
             <div class="guest-card">
-              <div class="guest-avatar guest-avatar-photo photo-placeholder"><svg class="icon" aria-hidden="true"><use href="#icon-photo"/></svg> Foto (placeholder)</div>
+              <div class="guest-avatar guest-avatar-photo"><img src="placeholder/Beatriz-Nunes.webp" alt="" /></div>
               <div><div class="guest-name">Beatriz Nunes (ilustrativo)</div><div class="guest-role">Convidada especial</div></div>
               <p class="guest-bio">Exemplo com foto real de perfil — nos demais cartões, sem foto disponível, o avatar usa as iniciais.</p>
             </div>
@@ -1719,7 +1747,7 @@
       <!-- k. Local -->
       <div class="component-block" id="local">
         <h3>k. Local</h3>
-        <p class="hint">O endereço padrão é a sede do CCF, mas cada evento pode usar um local diferente.</p>
+        <p class="hint">O endereço padrão é a sede do CCF, mas cada evento pode usar um local diferente. O endereço vem sempre acompanhado de um mini-mapa (embed do Google Maps, sem chave de API) e de um link direto de rota.</p>
         <div class="demo">
           <div class="grid grid-2">
             <div class="card">
@@ -1729,6 +1757,10 @@
                 <div>
                   <div>Rua Calasans, 200, Vila Santa Catarina, São Paulo, SP, CEP 04369-100</div>
                   <span class="confirm-note"><svg class="icon" aria-hidden="true"><use href="#icon-info"/></svg> Confirmar com a organização antes de publicar</span>
+                  <div class="map-embed">
+                    <iframe src="https://www.google.com/maps?q=Rua+Calasans%2C+200%2C+Vila+Santa+Catarina%2C+S%C3%A3o+Paulo%2C+SP%2C+CEP+04369-100&#38;output=embed" title="Mapa: Rua Calasans, 200, Vila Santa Catarina, São Paulo, SP" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                  </div>
+                  <a class="map-route-link" href="https://www.google.com/maps/dir/?api=1&#38;destination=Rua+Calasans%2C+200%2C+Vila+Santa+Catarina%2C+S%C3%A3o+Paulo%2C+SP%2C+CEP+04369-100" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#icon-external"/></svg> Ver rota</a>
                 </div>
               </div>
             </div>
@@ -1951,7 +1983,7 @@
 <footer class="site-footer">
   <div class="shell">
     <p>CCF — Design System da Agenda. Documento vivo, ver <code>AGENTS.md</code>.</p>
-    <p>Desenvolvido com <span aria-hidden="true">&lt;3</span><span class="visually-hidden">amor</span> por <a href="https://www.hiperbold.com.br" target="_blank" rel="noopener nofollow">Hiperbold</a>.</p>
+    <p>Desenvolvido com <svg class="icon" aria-hidden="true" style="color: var(--ccf-color-coral); width: 0.9em; height: 0.9em; vertical-align: -0.05em;"><use href="#icon-menu-heart"/></svg><span class="visually-hidden">amor</span> por <a href="https://www.hiperbold.com.br" target="_blank" rel="noopener nofollow">Hiperbold</a>.</p>
   </div>
 </footer>
 

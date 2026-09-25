@@ -8,3 +8,7 @@ Thumbs.db
 .next/
 dist/
 build/
+
+# Originais de placeholder: só a versão WebP (já convertida) vai pro repo,
+# seguindo a mesma regra que o produto real vai seguir (sem guardar original).
+placeholder/*.png
