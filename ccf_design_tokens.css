@@ -237,7 +237,7 @@
   /* --- Card de evento (lista cronológica) ------------------------------ */
   --ccf-event-card-gap:          var(--ccf-space-4);
   --ccf-event-card-image-radius: var(--ccf-radius-lg);
-  --ccf-event-card-image-ratio:  16 / 10;
+  --ccf-event-card-image-ratio:  1 / 1; /* padrão 1:1, mesmo formato usado em redes sociais — facilita reaproveitar a mesma imagem */
 
   /* --- Etiqueta de data (dia grande + mês/semana) ---------------------- */
   --ccf-date-badge-bg:        var(--ccf-color-soft-primary);
@@ -287,7 +287,7 @@
 
   /* --- Banner do evento (imagem de topo, opcional) ---------------------- */
   --ccf-banner-radius:  var(--ccf-radius-xl);
-  --ccf-banner-ratio:   21 / 9;
+  --ccf-banner-ratio:   1 / 1; /* padrão 1:1, mesmo formato usado em redes sociais — facilita reaproveitar a mesma imagem */
   --ccf-banner-overlay: linear-gradient(180deg, rgb(48 51 54 / 0%) 40%, rgb(48 51 54 / 78%) 100%);
   --ccf-banner-caption-fg: var(--ccf-color-text-on-dark);
 
