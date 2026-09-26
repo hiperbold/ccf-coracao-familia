@@ -26,23 +26,33 @@
   .evento-banner-wrap { padding: var(--ccf-space-10) 0 0; }
   .evento-banner-wrap .banner { border-radius: 0; }
 
-  /* --- Corpo: duas colunas em desktop (>=1024px), coluna única abaixo --- */
+  /* --- Corpo: duas colunas em desktop (>=1024px), ordem própria no celular
+     abaixo disso --- */
   .evento-body { padding: var(--ccf-space-10) 0 var(--ccf-space-20); }
+
+  /* No celular (a maior parte do acesso), o resumo (data, status, local com
+     mapa, ações) sobe pra logo depois do título/descrição — não fica mais
+     largado no fim da rolagem, depois de programação e convidados, como no
+     Modelo A. No desktop a ordem visual não muda: introdução e o resto em
+     cima da coluna principal, resumo fixo do lado. */
   .evento-layout {
     display: grid;
     grid-template-columns: 1fr;
+    grid-template-areas: "intro" "side" "rest";
     gap: var(--ccf-space-10);
   }
   @media (min-width: 1024px) {
-    /* align-items no valor padrão (stretch): a coluna lateral precisa ter a
-       mesma altura da coluna principal (mais alta) para o cartão sticky ter
-       espaço de sobra onde "grudar" durante a rolagem — com align-items:
-       start a coluna lateral ficaria do tamanho do próprio cartão e o
-       sticky não teria percurso nenhum para acompanhar a rolagem. */
-    .evento-layout { grid-template-columns: 1.85fr 1fr; }
+    /* align-items no valor padrão (stretch): a área "side" precisa ter a
+       altura das duas linhas que ela ocupa (intro + rest) para o cartão
+       sticky ter espaço de sobra onde "grudar" durante a rolagem. */
+    .evento-layout {
+      grid-template-columns: 1.85fr 1fr;
+      grid-template-areas: "intro side" "rest side";
+    }
   }
-  .evento-main-col { display: flex; flex-direction: column; gap: var(--ccf-space-10); min-width: 0; }
-  .evento-side-col { min-width: 0; }
+  .evento-intro { grid-area: intro; }
+  .evento-side-col { grid-area: side; min-width: 0; }
+  .evento-rest { grid-area: rest; display: flex; flex-direction: column; gap: var(--ccf-space-10); min-width: 0; }
 
   /* Cartão-resumo: sticky, acompanha a rolagem sem ficar atrás do
      cabeçalho fixo (topo do cabeçalho ~88px de altura + folga). Como
@@ -135,49 +145,19 @@
   <section class="evento-body">
     <div class="shell evento-layout">
 
-      <!-- Coluna principal -->
-      <div class="evento-main-col">
-        <div>
-          <h1 class="event-title">Feira de trocas comunitária (evento ilustrativo)</h1>
-          <p class="event-desc" style="margin-top: var(--ccf-space-4);">
-            Encontro ilustrativo para reunir famílias em torno da troca de roupas, brinquedos e
-            utensílios, com oficinas paralelas para crianças. Todos os nomes, horários e números
-            deste exemplo são fictícios — servem só para mostrar como a página de um evento real
-            se comportaria com todos os campos preenchidos.
-          </p>
-        </div>
-
-        <div>
-          <h2 class="block-title">Programação</h2>
-          <div class="day-tabs" role="tablist" aria-label="Dias do evento">
-            <button type="button" class="day-tab" role="tab" aria-selected="true">Dia 1 — 10/10</button>
-            <button type="button" class="day-tab" role="tab" aria-selected="false">Dia 2 — 11/10</button>
-          </div>
-          <div class="schedule">
-            <div class="schedule-item"><div class="schedule-time">09h00</div><div class="schedule-content"><h4>Abertura e acolhida</h4><p>Recepção das famílias na entrada da sede.</p></div></div>
-            <div class="schedule-item"><div class="schedule-time">10h00</div><div class="schedule-content"><h4>Troca de roupas e brinquedos</h4><p>Mesas organizadas por faixa etária.</p></div></div>
-            <div class="schedule-item"><div class="schedule-time">11h30</div><div class="schedule-content"><h4>Oficina para crianças</h4><p>Atividade paralela, com convidados ilustrativos abaixo.</p></div></div>
-          </div>
-        </div>
-
-        <div>
-          <h2 class="block-title">Convidados</h2>
-          <div class="guest-grid">
-            <div class="guest-card">
-              <div class="guest-avatar guest-avatar-photo"><img src="placeholder/ana-ferreira.webp" alt="" /></div>
-              <div><div class="guest-name">Ana Ferreira (ilustrativo)</div><div class="guest-role">Educadora social</div></div>
-              <p class="guest-bio">Conduz a oficina de crianças com dinâmicas de troca e cooperação.</p>
-            </div>
-            <div class="guest-card">
-              <div class="guest-avatar guest-avatar-photo"><img src="placeholder/marcos-ribeiro.webp" alt="" /></div>
-              <div><div class="guest-name">Marcos Ribeiro (ilustrativo)</div><div class="guest-role">Voluntário de logística</div></div>
-              <p class="guest-bio">Organiza a chegada e a triagem dos itens doados para a troca.</p>
-            </div>
-          </div>
-        </div>
+      <!-- Introdução: título e descrição -->
+      <div class="evento-intro">
+        <h1 class="event-title">Feira de trocas comunitária (evento ilustrativo)</h1>
+        <p class="event-desc" style="margin-top: var(--ccf-space-4);">
+          Encontro ilustrativo para reunir famílias em torno da troca de roupas, brinquedos e
+          utensílios, com oficinas paralelas para crianças. Todos os nomes, horários e números
+          deste exemplo são fictícios — servem só para mostrar como a página de um evento real
+          se comportaria com todos os campos preenchidos.
+        </p>
       </div>
 
-      <!-- Coluna lateral: cartão-resumo sticky -->
+      <!-- Resumo: no desktop é o cartão sticky da coluna lateral; no celular
+           sobe pra cá, logo após a introdução, em vez de ficar no fim. -->
       <aside class="evento-side-col">
         <div class="card evento-summary-card">
           <div class="header-with-date">
@@ -209,6 +189,39 @@
           </div>
         </div>
       </aside>
+
+      <!-- Resto: programação e convidados. No desktop fica embaixo da
+           introdução, na mesma coluna; no celular vem depois do resumo. -->
+      <div class="evento-rest">
+        <div>
+          <h2 class="block-title">Programação</h2>
+          <div class="day-tabs" role="tablist" aria-label="Dias do evento">
+            <button type="button" class="day-tab" role="tab" aria-selected="true">Dia 1 — 10/10</button>
+            <button type="button" class="day-tab" role="tab" aria-selected="false">Dia 2 — 11/10</button>
+          </div>
+          <div class="schedule">
+            <div class="schedule-item"><div class="schedule-time">09h00</div><div class="schedule-content"><h4>Abertura e acolhida</h4><p>Recepção das famílias na entrada da sede.</p></div></div>
+            <div class="schedule-item"><div class="schedule-time">10h00</div><div class="schedule-content"><h4>Troca de roupas e brinquedos</h4><p>Mesas organizadas por faixa etária.</p></div></div>
+            <div class="schedule-item"><div class="schedule-time">11h30</div><div class="schedule-content"><h4>Oficina para crianças</h4><p>Atividade paralela, com convidados ilustrativos abaixo.</p></div></div>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="block-title">Convidados</h2>
+          <div class="guest-grid">
+            <div class="guest-card">
+              <div class="guest-avatar guest-avatar-photo"><img src="placeholder/ana-ferreira.webp" alt="" /></div>
+              <div><div class="guest-name">Ana Ferreira (ilustrativo)</div><div class="guest-role">Educadora social</div></div>
+              <p class="guest-bio">Conduz a oficina de crianças com dinâmicas de troca e cooperação.</p>
+            </div>
+            <div class="guest-card">
+              <div class="guest-avatar guest-avatar-photo"><img src="placeholder/marcos-ribeiro.webp" alt="" /></div>
+              <div><div class="guest-name">Marcos Ribeiro (ilustrativo)</div><div class="guest-role">Voluntário de logística</div></div>
+              <p class="guest-bio">Organiza a chegada e a triagem dos itens doados para a troca.</p>
+            </div>
+          </div>
+        </div>
+      </div>
 
     </div>
   </section>
