@@ -57,9 +57,9 @@ O bloco de local sempre vem com um mini-mapa (embed do Google Maps, sem chave de
 
 Banner de evento e fotos de convidado devem ser convertidas para WebP no momento do upload (painel administrativo), guardando só a versão web; o arquivo original enviado não fica armazenado, para economizar espaço em disco. Detalhar o pipeline exato (biblioteca de conversão, tamanhos gerados) quando a implementação do Payload começar.
 
-**Formato 1:1 fixo** (decisão do Filipe, 26/09/2026): card de evento (lista/grade na home) e banner do evento usam sempre proporção 1:1 — mesmo formato das redes sociais, para a equipe do CCF reaproveitar direto uma arte já feita para Instagram sem precisar recortar/redimensionar. Tokens `--ccf-event-card-image-ratio` e `--ccf-banner-ratio` em `ccf_design_tokens.css`. `placeholder/banner-evento.webp` é 16:9 (legado, anterior a essa decisão) e por isso corta nas bordas ao ser exibido em 1:1 — isso é esperado e documentado no próprio design system; artes novas devem já nascer quadradas.
+**Formato 1:1 fixo** (decisão do Filipe, 26/09/2026): card de evento (lista/grade na home) e banner do evento usam sempre proporção 1:1 — mesmo formato das redes sociais, para a equipe do CCF reaproveitar direto uma arte já feita para Instagram sem precisar recortar/redimensionar. Tokens `--ccf-event-card-image-ratio` e `--ccf-banner-ratio` em `ccf_design_tokens.css`.
 
-Placeholders de imagem ficam em `placeholder/` (fora do fluxo real do produto, só ilustrativo): `Beatriz-Nunes.webp` (convidada avulsa, usada no design system), `banner-evento.webp` (banner de evento, 16:9, evento "Feira de trocas comunitária"), `ana-ferreira.webp` e `marcos-ribeiro.webp` (fotos dos dois convidados desse mesmo evento ilustrativo — usar nas páginas de evento).
+Placeholders de imagem ficam em `placeholder/` (fora do fluxo real do produto, só ilustrativo): `Beatriz-Nunes.webp` (convidada avulsa, usada no design system), `banner-evento-2.webp` (banner de evento em uso, 1:1, evento "Feira de trocas comunitária" — `banner-evento.webp`, a versão original 16:9, ficou só de referência histórica, sem uso em nenhuma página), `ana-ferreira.webp` e `marcos-ribeiro.webp` (fotos dos dois convidados desse mesmo evento ilustrativo — usar nas páginas de evento).
 
 ## Pesquisa inicial de referências (2026-09-25)
 
